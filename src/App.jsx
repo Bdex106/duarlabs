@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useState, useRef } from 'react';
-import { motion, useScroll, useSpring, useTransform, useInView, AnimatePresence } from 'framer-motion';
+import { motion, useScroll, useSpring, useTransform } from 'framer-motion';
 import { copy } from './content/translations.js';
 import ordoLogo from './assets/ordo/logo.png';
 import ordoDashboard from './assets/ordo/dashboard.png';
@@ -26,56 +26,57 @@ function useRoute() {
   return { path, navigate };
 }
 
-/* ── Reveal animation wrapper ── */
+/* ── Scroll-linked reveal with spring physics ── */
 function Reveal({ children, className = '', delay = 0 }) {
   const ref = useRef(null);
-  const isInView = useInView(ref, { once: true, margin: '-60px' });
+  const { scrollYProgress } = useScroll({
+    target: ref,
+    offset: ['start 0.95', 'start 0.55'],
+  });
+  const smooth = useSpring(scrollYProgress, { mass: 0.6, stiffness: 100, damping: 22 });
+  const y = useTransform(smooth, [0, 1], [50, 0]);
+  const opacity = useTransform(smooth, [0, 1], [0, 1]);
+  const scale = useTransform(smooth, [0, 1], [0.97, 1]);
 
   return (
     <motion.div
       ref={ref}
       className={className}
-      initial={{ opacity: 0, y: 28 }}
-      animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 28 }}
-      transition={{ duration: 0.7, delay, ease: [0.22, 1, 0.36, 1] }}
+      style={{ opacity, y, scale, willChange: 'transform, opacity' }}
     >
       {children}
     </motion.div>
   );
 }
 
-/* ── Stagger children wrapper ── */
+/* ── Stagger children with scroll-linked spring ── */
 function StaggerContainer({ children, className = '' }) {
   const ref = useRef(null);
-  const isInView = useInView(ref, { once: true, margin: '-40px' });
+  const { scrollYProgress } = useScroll({
+    target: ref,
+    offset: ['start 0.92', 'start 0.45'],
+  });
+  const smooth = useSpring(scrollYProgress, { mass: 0.7, stiffness: 90, damping: 20 });
+  const opacity = useTransform(smooth, [0, 1], [0, 1]);
+  const y = useTransform(smooth, [0, 1], [60, 0]);
 
   return (
     <motion.div
       ref={ref}
       className={className}
-      initial="hidden"
-      animate={isInView ? 'visible' : 'hidden'}
-      variants={{
-        hidden: {},
-        visible: { transition: { staggerChildren: 0.08 } },
-      }}
+      style={{ opacity, y, willChange: 'transform, opacity' }}
     >
       {children}
     </motion.div>
   );
 }
 
+/* ── Stagger items (static, parent handles scroll) ── */
 function StaggerItem({ children, className = '' }) {
   return (
-    <motion.div
-      className={className}
-      variants={{
-        hidden: { opacity: 0, y: 18 },
-        visible: { opacity: 1, y: 0, transition: { duration: 0.5, ease: [0.22, 1, 0.36, 1] } },
-      }}
-    >
+    <div className={className}>
       {children}
-    </motion.div>
+    </div>
   );
 }
 
