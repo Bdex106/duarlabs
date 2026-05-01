@@ -114,6 +114,12 @@ export const copy = {
           tone: 'OCR / IA Local',
         },
         {
+          title: 'OSINT Intelligence Pipeline',
+          href: null,
+          body: 'Pipeline avanzado de inteligencia para recoleccion de datos publicos, deduplicacion y clustering de identidades con scoring de confianza.',
+          tone: 'Inteligencia / Datos',
+        },
+        {
           title: 'Masonic Genealogy Tree',
           href: null,
           body: 'Herramienta interactiva para modelar genealogias rituales con grafos editables, autolayout, persistencia local e investigacion asistida.',
@@ -289,6 +295,12 @@ export const copy = {
           href: null,
           body: 'Offline system to extract, structure, and export sensitive case files from images, Word, and Excel using OCR, SQLite, and local AI.',
           tone: 'OCR / Local AI',
+        },
+        {
+          title: 'OSINT Intelligence Pipeline',
+          href: null,
+          body: 'Advanced intelligence pipeline for public data collection, deduplication, and entity clustering with confidence scoring.',
+          tone: 'Intelligence / Data',
         },
         {
           title: 'Masonic Genealogy Tree',
