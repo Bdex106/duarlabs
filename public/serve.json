@@ -1,14 +1,6 @@
 {
+  "cleanUrls": false,
   "rewrites": [
-    { "source": "/ordo-data/**", "destination": "/ordo-data/$1" },
-    { "source": "**", "destination": "/index.html" }
-  ],
-  "headers": [
-    {
-      "source": "**",
-      "headers": [
-        { "key": "Cache-Control", "value": "public, max-age=0, must-revalidate" }
-      ]
-    }
+    { "source": "/**", "destination": "/index.html" }
   ]
 }
