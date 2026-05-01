@@ -114,12 +114,6 @@ export const copy = {
           tone: 'OCR / IA Local',
         },
         {
-          title: 'COL136 Logia Web',
-          href: 'https://www.caballerosleon.com/',
-          body: 'Aplicacion integral con area publica e interna, calendario, editor de contenido, permisos, archivos y despliegue en la nube.',
-          tone: 'Aplicacion integral / Institucional',
-        },
-        {
           title: 'Masonic Genealogy Tree',
           href: null,
           body: 'Herramienta interactiva para modelar genealogias rituales con grafos editables, autolayout, persistencia local e investigacion asistida.',
@@ -295,12 +289,6 @@ export const copy = {
           href: null,
           body: 'Offline system to extract, structure, and export sensitive case files from images, Word, and Excel using OCR, SQLite, and local AI.',
           tone: 'OCR / Local AI',
-        },
-        {
-          title: 'COL136 Logia Web',
-          href: 'https://www.caballerosleon.com/',
-          body: 'Full-stack application with public and internal areas, calendar, content editor, permissions, file handling, and cloud deployment.',
-          tone: 'Full-stack / Institutional',
         },
         {
           title: 'Masonic Genealogy Tree',
