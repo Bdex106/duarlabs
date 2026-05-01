@@ -229,8 +229,6 @@ function HomePage({ t, lang, setLang, onNavigate }) {
             </div>
           </div>
         </section>
-
-        </section>
       </main>
       <Footer t={t} lang={lang} setLang={setLang} onNavigate={onNavigate} />
     </>
