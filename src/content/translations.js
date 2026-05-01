@@ -103,7 +103,7 @@ export const copy = {
         },
         {
           title: 'Ordo Data Landing',
-          href: 'http://localhost:5173/ordo-data/index.html',
+          href: '/ordo-data/index.html',
           body: 'Landing interna para una plataforma de ejecucion local orientada a analisis forense, CDR, datos geoespaciales e IA aislada.',
           tone: 'Datos / Inteligencia',
         },
@@ -286,7 +286,7 @@ export const copy = {
         },
         {
           title: 'Ordo Data Landing',
-          href: 'http://localhost:5173/ordo-data/index.html',
+          href: '/ordo-data/index.html',
           body: 'Internal landing page for a local-first forensic analysis platform covering CDR, geospatial data, and isolated AI.',
           tone: 'Data / Intelligence',
         },

@@ -1,11 +1,12 @@
 import React, { useEffect, useMemo, useState, useRef } from 'react';
-import { motion, useScroll, useSpring, useTransform } from 'framer-motion';
+import { motion, useScroll, useSpring, useTransform, useInView, AnimatePresence } from 'framer-motion';
 import { copy } from './content/translations.js';
 import ordoLogo from './assets/ordo/logo.png';
 import ordoDashboard from './assets/ordo/dashboard.png';
 import ordoNormalization from './assets/ordo/normalizacion.png';
 import ordoAi from './assets/ordo/ia-comparativa.png';
 
+/* ── Routing ── */
 function useRoute() {
   const [path, setPath] = useState(window.location.pathname);
 
@@ -25,6 +26,60 @@ function useRoute() {
   return { path, navigate };
 }
 
+/* ── Reveal animation wrapper ── */
+function Reveal({ children, className = '', delay = 0 }) {
+  const ref = useRef(null);
+  const isInView = useInView(ref, { once: true, margin: '-60px' });
+
+  return (
+    <motion.div
+      ref={ref}
+      className={className}
+      initial={{ opacity: 0, y: 28 }}
+      animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 28 }}
+      transition={{ duration: 0.7, delay, ease: [0.22, 1, 0.36, 1] }}
+    >
+      {children}
+    </motion.div>
+  );
+}
+
+/* ── Stagger children wrapper ── */
+function StaggerContainer({ children, className = '' }) {
+  const ref = useRef(null);
+  const isInView = useInView(ref, { once: true, margin: '-40px' });
+
+  return (
+    <motion.div
+      ref={ref}
+      className={className}
+      initial="hidden"
+      animate={isInView ? 'visible' : 'hidden'}
+      variants={{
+        hidden: {},
+        visible: { transition: { staggerChildren: 0.08 } },
+      }}
+    >
+      {children}
+    </motion.div>
+  );
+}
+
+function StaggerItem({ children, className = '' }) {
+  return (
+    <motion.div
+      className={className}
+      variants={{
+        hidden: { opacity: 0, y: 18 },
+        visible: { opacity: 1, y: 0, transition: { duration: 0.5, ease: [0.22, 1, 0.36, 1] } },
+      }}
+    >
+      {children}
+    </motion.div>
+  );
+}
+
+/* ── SmartLink ── */
 function SmartLink({ href, onNavigate, children, className, ...props }) {
   const isInternal = href?.startsWith('/');
 
@@ -42,6 +97,7 @@ function SmartLink({ href, onNavigate, children, className, ...props }) {
   );
 }
 
+/* ── Language Toggle ── */
 function LanguageToggle({ lang, setLang }) {
   return (
     <div className="language-toggle" aria-label="Language selector">
@@ -60,9 +116,18 @@ function LanguageToggle({ lang, setLang }) {
   );
 }
 
+/* ── Header ── */
 function Header({ t, lang, setLang, onNavigate }) {
+  const [scrolled, setScrolled] = useState(false);
+
+  useEffect(() => {
+    const handler = () => setScrolled(window.scrollY > 40);
+    window.addEventListener('scroll', handler, { passive: true });
+    return () => window.removeEventListener('scroll', handler);
+  }, []);
+
   return (
-    <header className="site-header">
+    <header className={`site-header ${scrolled ? 'is-scrolled' : ''}`}>
       <SmartLink href="/" onNavigate={onNavigate} className="brand" aria-label="DuarLabs home">
         <span className="brand-mark">D</span>
         <span>DuarLabs</span>
@@ -77,156 +142,246 @@ function Header({ t, lang, setLang, onNavigate }) {
   );
 }
 
-function SectionIntro({ label, title, body }) {
+/* ── Section Intro ── */
+function SectionIntro({ label, title, body, delay = 0 }) {
   return (
-    <div className="section-intro">
+    <Reveal className="section-intro" delay={delay}>
       <p className="eyebrow">{label}</p>
       <h2>{title}</h2>
       {body && <p>{body}</p>}
-    </div>
+    </Reveal>
   );
 }
 
+/* ── Scroll indicator ── */
+function ScrollIndicator() {
+  return (
+    <motion.div
+      className="scroll-indicator"
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ delay: 1.5, duration: 0.8 }}
+    >
+      <motion.div
+        className="scroll-dot"
+        animate={{ y: [0, 10, 0] }}
+        transition={{ repeat: Infinity, duration: 1.6, ease: 'easeInOut' }}
+      />
+    </motion.div>
+  );
+}
+
+/* ── HomePage ── */
 function HomePage({ t, lang, setLang, onNavigate }) {
   const heroRef = useRef(null);
   const { scrollYProgress } = useScroll({
     target: heroRef,
-    offset: ["start start", "end start"],
+    offset: ['start start', 'end start'],
   });
 
   const smoothProgress = useSpring(scrollYProgress, {
     mass: 0.8,
     stiffness: 80,
-    damping: 20
+    damping: 20,
   });
 
-  const archScale = useTransform(smoothProgress, [0, 0.4], [1, 1.3]);
-  const archOpacity = useTransform(smoothProgress, [0, 0.35], [0.6, 0]);
-  const archBlur = useTransform(smoothProgress, [0, 0.35], ["blur(0px)", "blur(20px)"]);
-  const titleY = useTransform(smoothProgress, [0, 0.5], [0, -120]);
+  const orbScale = useTransform(smoothProgress, [0, 0.4], [1, 1.4]);
+  const orbOpacity = useTransform(smoothProgress, [0, 0.35], [0.5, 0]);
+  const orbBlur = useTransform(smoothProgress, [0, 0.35], ['blur(0px)', 'blur(30px)']);
+  const titleY = useTransform(smoothProgress, [0, 0.5], [0, -140]);
   const titleOpacity = useTransform(smoothProgress, [0, 0.4], [1, 0]);
+  const gridOpacity = useTransform(smoothProgress, [0, 0.3], [0.4, 0]);
 
   return (
     <>
       <Header t={t} lang={lang} setLang={setLang} onNavigate={onNavigate} />
       <main>
-        <section ref={heroRef} className="relative h-[180vh]" id="home">
-          <div className="sticky top-0 h-screen w-full flex flex-col items-center justify-center overflow-hidden px-6">
-            {/* Parallax Background Decoration */}
-            <motion.div 
-              style={{ scale: archScale, opacity: archOpacity, filter: archBlur }}
-              className="absolute inset-0 z-0 flex items-center justify-center"
-            >
-              <div className="w-[80vw] h-[80vw] max-w-[800px] max-h-[800px] bg-gradient-to-br from-red-600/20 to-transparent blur-[100px] rounded-full" />
-            </motion.div>
+        {/* ── Hero with Parallax Dissolve ── */}
+        <section ref={heroRef} className="hero-parallax" id="home">
+          <div className="hero-sticky">
+            {/* Animated grid background */}
+            <motion.div className="hero-grid-bg" style={{ opacity: gridOpacity }} />
 
-            <motion.div 
+            {/* Parallax orbs */}
+            <motion.div
+              className="hero-orb hero-orb-1"
+              style={{ scale: orbScale, opacity: orbOpacity, filter: orbBlur }}
+            />
+            <motion.div
+              className="hero-orb hero-orb-2"
+              style={{ scale: orbScale, opacity: orbOpacity, filter: orbBlur }}
+            />
+
+            {/* Content */}
+            <motion.div
+              className="hero-content"
               style={{ opacity: titleOpacity, y: titleY }}
-              className="hero-copy text-center z-10 max-w-4xl"
             >
-              <p className="eyebrow">{t.hero.eyebrow}</p>
-              <h1 className="text-white text-6xl md:text-8xl font-black tracking-tighter mb-6">
+              <motion.p
+                className="eyebrow"
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.2, duration: 0.6 }}
+              >
+                {t.hero.eyebrow}
+              </motion.p>
+
+              <motion.h1
+                initial={{ opacity: 0, y: 30 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.35, duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
+              >
                 {t.hero.title}
-              </h1>
-              <p className="hero-slogan text-xl md:text-2xl text-zinc-400 font-light mb-8 italic">
+              </motion.h1>
+
+              <motion.p
+                className="hero-slogan"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.55, duration: 0.7 }}
+              >
                 {t.hero.slogan}
-              </p>
-              <p className="hero-body text-zinc-500 max-w-2xl mx-auto mb-12">
+              </motion.p>
+
+              <motion.p
+                className="hero-body"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 0.7, duration: 0.7 }}
+              >
                 {t.hero.body}
-              </p>
-              <div className="hero-actions flex flex-wrap justify-center gap-4">
+              </motion.p>
+
+              <motion.div
+                className="hero-actions"
+                initial={{ opacity: 0, y: 12 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.85, duration: 0.6 }}
+              >
                 <a className="button button-primary" href="#projects">
                   {t.hero.primary}
                 </a>
-                <div className="capability-status px-4 py-2 border border-white/10 rounded-full flex items-center gap-3 bg-white/5 backdrop-blur-sm">
-                   <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse" />
-                   <span className="text-[10px] font-black uppercase tracking-widest text-white/50">{t.status.ready}</span>
+                <div className="status-pill">
+                  <span className="status-dot" />
+                  <span>{t.status.ready}</span>
                 </div>
-              </div>
+              </motion.div>
             </motion.div>
+
+            <ScrollIndicator />
           </div>
         </section>
 
+        {/* ── Metrics Console ── */}
         <section className="content-band" id="about">
-          <div className="container split">
-            <SectionIntro label={t.about.label} title={t.about.title} body={t.about.body} />
-            <div className="principles-list reveal">
-              {t.about.principles.map((principle) => (
-                <p key={principle}>{principle}</p>
-              ))}
+          <div className="container">
+            <div className="metrics-row">
+              <SectionIntro label={t.about.label} title={t.about.title} body={t.about.body} />
+              <StaggerContainer className="console-strip">
+                {t.metrics.map(([title, body]) => (
+                  <StaggerItem key={title} className="metric-card">
+                    <span className="metric-label">{title}</span>
+                    <p>{body}</p>
+                  </StaggerItem>
+                ))}
+              </StaggerContainer>
             </div>
+
+            <Reveal delay={0.2}>
+              <div className="principles-list">
+                {t.about.principles.map((principle) => (
+                  <p key={principle}>{principle}</p>
+                ))}
+              </div>
+            </Reveal>
           </div>
         </section>
 
+        {/* ── Technologies ── */}
         <section className="content-band muted" id="technologies">
           <div className="container">
             <SectionIntro label={t.labels.technologies} title={t.techTitle} />
-            <div className="tech-grid reveal">
+            <StaggerContainer className="tech-grid">
               {t.technologies.map((tech) => (
-                <span key={tech}>{tech}</span>
+                <StaggerItem key={tech}>
+                  <span className="tech-chip">{tech}</span>
+                </StaggerItem>
               ))}
-            </div>
+            </StaggerContainer>
           </div>
         </section>
 
+        {/* ── Capabilities ── */}
         <section className="content-band" id="capabilities">
           <div className="container">
             <SectionIntro label={t.labels.services} title={t.capabilitiesTitle} />
-            <div className="card-grid reveal">
-              {t.capabilities.map((capability) => (
-                <article className="premium-card" key={capability.title}>
-                  <p className="card-index">0{t.capabilities.indexOf(capability) + 1}</p>
-                  <h3>{capability.title}</h3>
-                  <p>{capability.body}</p>
-                  <ul>
-                    {capability.items.map((item) => (
-                      <li key={item}>{item}</li>
-                    ))}
-                  </ul>
-                </article>
+            <StaggerContainer className="card-grid">
+              {t.capabilities.map((capability, i) => (
+                <StaggerItem key={capability.title}>
+                  <article className="premium-card">
+                    <div className="card-header">
+                      <p className="card-index">0{i + 1}</p>
+                      <div className="card-glow" />
+                    </div>
+                    <h3>{capability.title}</h3>
+                    <p>{capability.body}</p>
+                    <ul>
+                      {capability.items.map((item) => (
+                        <li key={item}>{item}</li>
+                      ))}
+                    </ul>
+                  </article>
+                </StaggerItem>
               ))}
-            </div>
+            </StaggerContainer>
           </div>
         </section>
 
+        {/* ── Projects ── */}
         <section className="content-band muted" id="projects">
           <div className="container">
             <SectionIntro label={t.projects.label} title={t.projects.title} body={t.projects.body} />
-            <div className="project-grid reveal">
+            <StaggerContainer className="project-grid">
               {t.projects.items.map((project, index) => (
-                <article className="project-card" key={project.title}>
-                  <div className={`project-visual project-visual-${index + 1}`}>
-                    <span>{project.tone}</span>
-                    <strong>{project.title}</strong>
-                  </div>
-                  <div className="project-body">
-                    <h3>{project.title}</h3>
-                    <p>{project.body}</p>
-                    {project.href ? (
-                      <SmartLink href={project.href} onNavigate={onNavigate} className="text-link">
-                        {t.projects.cta}
-                      </SmartLink>
-                    ) : (
-                      <span className="text-link text-link-muted">{t.projects.internalCta}</span>
-                    )}
-                  </div>
-                </article>
+                <StaggerItem key={project.title}>
+                  <article className="project-card">
+                    <div className={`project-visual project-visual-${index + 1}`}>
+                      <span>{project.tone}</span>
+                      <strong>{project.title}</strong>
+                    </div>
+                    <div className="project-body">
+                      <h3>{project.title}</h3>
+                      <p>{project.body}</p>
+                      {project.href ? (
+                        <SmartLink href={project.href} onNavigate={onNavigate} className="text-link" target="_blank" rel="noopener noreferrer">
+                          {t.projects.cta}
+                          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M7 17L17 7M17 7H7M17 7v10"/></svg>
+                        </SmartLink>
+                      ) : (
+                        <span className="text-link text-link-muted">{t.projects.internalCta}</span>
+                      )}
+                    </div>
+                  </article>
+                </StaggerItem>
               ))}
-            </div>
+            </StaggerContainer>
           </div>
         </section>
 
+        {/* ── Why ── */}
         <section className="content-band" id="why">
           <div className="container split">
             <SectionIntro label={t.why.label} title={t.why.title} />
-            <div className="why-grid reveal">
-              {t.why.items.map((item) => (
-                <div key={item}>
-                  <span />
-                  {item}
-                </div>
+            <StaggerContainer className="why-grid">
+              {t.why.items.map((item, i) => (
+                <StaggerItem key={item}>
+                  <div className="why-item">
+                    <span className="why-index">0{i + 1}</span>
+                    <span className="why-text">{item}</span>
+                  </div>
+                </StaggerItem>
               ))}
-            </div>
+            </StaggerContainer>
           </div>
         </section>
       </main>
@@ -235,6 +390,7 @@ function HomePage({ t, lang, setLang, onNavigate }) {
   );
 }
 
+/* ── OrdoPage ── */
 function OrdoPage({ t, lang, setLang, onNavigate }) {
   return (
     <>
@@ -242,9 +398,9 @@ function OrdoPage({ t, lang, setLang, onNavigate }) {
       <main className="ordo-page">
         <section className="ordo-hero">
           <div className="container ordo-hero-grid">
-            <div className="reveal">
+            <Reveal>
               <SmartLink href="/" onNavigate={onNavigate} className="back-link">
-                {t.ordo.back}
+                ← {t.ordo.back}
               </SmartLink>
               <p className="eyebrow">{t.ordo.label}</p>
               <img className="ordo-logo" src={ordoLogo} alt="Ordo Data" />
@@ -258,38 +414,42 @@ function OrdoPage({ t, lang, setLang, onNavigate }) {
                   {t.ordo.secondary}
                 </a>
               </div>
-            </div>
-            <div className="ordo-dashboard reveal">
+            </Reveal>
+            <Reveal delay={0.2} className="ordo-dashboard">
               <img src={ordoDashboard} alt="Minerva dashboard preview" />
-            </div>
+            </Reveal>
           </div>
         </section>
 
         <section className="content-band muted">
           <div className="container">
-            <div className="ordo-pillars reveal">
+            <StaggerContainer className="ordo-pillars">
               {t.ordo.pillars.map(([title, body]) => (
-                <article key={title}>
-                  <h3>{title}</h3>
-                  <p>{body}</p>
-                </article>
+                <StaggerItem key={title}>
+                  <article>
+                    <h3>{title}</h3>
+                    <p>{body}</p>
+                  </article>
+                </StaggerItem>
               ))}
-            </div>
+            </StaggerContainer>
           </div>
         </section>
 
         <section className="content-band" id="ordo-architecture">
           <div className="container ordo-detail-grid">
-            <div className="ordo-image-stack reveal">
+            <Reveal className="ordo-image-stack">
               <img src={ordoNormalization} alt="Ordo normalization workflow" />
               <img src={ordoAi} alt="Ordo AI comparison workflow" />
-            </div>
-            <div className="ordo-sections reveal">
-              {t.ordo.sections.map((section) => (
-                <article key={section.title}>
-                  <h2>{section.title}</h2>
-                  <p>{section.body}</p>
-                </article>
+            </Reveal>
+            <div className="ordo-sections">
+              {t.ordo.sections.map((section, i) => (
+                <Reveal key={section.title} delay={i * 0.1}>
+                  <article>
+                    <h2>{section.title}</h2>
+                    <p>{section.body}</p>
+                  </article>
+                </Reveal>
               ))}
             </div>
           </div>
@@ -300,6 +460,7 @@ function OrdoPage({ t, lang, setLang, onNavigate }) {
   );
 }
 
+/* ── Footer ── */
 function Footer({ t, lang, setLang, onNavigate }) {
   return (
     <footer className="site-footer">
@@ -315,6 +476,7 @@ function Footer({ t, lang, setLang, onNavigate }) {
   );
 }
 
+/* ── App Root ── */
 export default function App() {
   const [lang, setLang] = useState(() => localStorage.getItem('duarlabs-lang') || 'es');
   const { path, navigate } = useRoute();
@@ -324,24 +486,6 @@ export default function App() {
     localStorage.setItem('duarlabs-lang', lang);
     document.documentElement.lang = lang;
   }, [lang]);
-
-  useEffect(() => {
-    const elements = document.querySelectorAll('.reveal');
-    document.body.classList.add('ready');
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) entry.target.classList.add('is-visible');
-        });
-      },
-      { threshold: 0.14 },
-    );
-    elements.forEach((element) => observer.observe(element));
-    return () => {
-      observer.disconnect();
-      document.body.classList.remove('ready');
-    };
-  }, [path, lang]);
 
   if (path === '/ordo-data') {
     window.location.replace('/ordo-data/index.html');
