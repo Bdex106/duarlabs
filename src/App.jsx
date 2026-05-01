@@ -1,4 +1,5 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState, useRef } from 'react';
+import { motion, useScroll, useSpring, useTransform } from 'framer-motion';
 import { copy } from './content/translations.js';
 import ordoLogo from './assets/ordo/logo.png';
 import ordoDashboard from './assets/ordo/dashboard.png';
@@ -70,7 +71,6 @@ function Header({ t, lang, setLang, onNavigate }) {
         <a href="/#projects">{t.nav.work}</a>
         <a href="/#capabilities">{t.nav.capabilities}</a>
         <a href="/#why">{t.nav.why}</a>
-        <a href="/#contact">{t.nav.contact}</a>
       </nav>
       <LanguageToggle lang={lang} setLang={setLang} />
     </header>
@@ -88,46 +88,62 @@ function SectionIntro({ label, title, body }) {
 }
 
 function HomePage({ t, lang, setLang, onNavigate }) {
+  const heroRef = useRef(null);
+  const { scrollYProgress } = useScroll({
+    target: heroRef,
+    offset: ["start start", "end start"],
+  });
+
+  const smoothProgress = useSpring(scrollYProgress, {
+    mass: 0.8,
+    stiffness: 80,
+    damping: 20
+  });
+
+  const archScale = useTransform(smoothProgress, [0, 0.4], [1, 1.3]);
+  const archOpacity = useTransform(smoothProgress, [0, 0.35], [0.6, 0]);
+  const archBlur = useTransform(smoothProgress, [0, 0.35], ["blur(0px)", "blur(20px)"]);
+  const titleY = useTransform(smoothProgress, [0, 0.5], [0, -120]);
+  const titleOpacity = useTransform(smoothProgress, [0, 0.4], [1, 0]);
+
   return (
     <>
       <Header t={t} lang={lang} setLang={setLang} onNavigate={onNavigate} />
       <main>
-        <section className="hero-section" id="home">
-          <div className="hero-grid">
-            <div className="hero-copy reveal">
+        <section ref={heroRef} className="relative h-[180vh]" id="home">
+          <div className="sticky top-0 h-screen w-full flex flex-col items-center justify-center overflow-hidden px-6">
+            {/* Parallax Background Decoration */}
+            <motion.div 
+              style={{ scale: archScale, opacity: archOpacity, filter: archBlur }}
+              className="absolute inset-0 z-0 flex items-center justify-center"
+            >
+              <div className="w-[80vw] h-[80vw] max-w-[800px] max-h-[800px] bg-gradient-to-br from-red-600/20 to-transparent blur-[100px] rounded-full" />
+            </motion.div>
+
+            <motion.div 
+              style={{ opacity: titleOpacity, y: titleY }}
+              className="hero-copy text-center z-10 max-w-4xl"
+            >
               <p className="eyebrow">{t.hero.eyebrow}</p>
-              <h1>{t.hero.title}</h1>
-              <p className="hero-slogan">{t.hero.slogan}</p>
-              <p className="hero-body">{t.hero.body}</p>
-              <div className="hero-actions">
+              <h1 className="text-white text-6xl md:text-8xl font-black tracking-tighter mb-6">
+                {t.hero.title}
+              </h1>
+              <p className="hero-slogan text-xl md:text-2xl text-zinc-400 font-light mb-8 italic">
+                {t.hero.slogan}
+              </p>
+              <p className="hero-body text-zinc-500 max-w-2xl mx-auto mb-12">
+                {t.hero.body}
+              </p>
+              <div className="hero-actions flex flex-wrap justify-center gap-4">
                 <a className="button button-primary" href="#projects">
                   {t.hero.primary}
                 </a>
-                <a className="button button-secondary" href="#contact">
-                  {t.hero.secondary}
-                </a>
+                <div className="capability-status px-4 py-2 border border-white/10 rounded-full flex items-center gap-3 bg-white/5 backdrop-blur-sm">
+                   <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse" />
+                   <span className="text-[10px] font-black uppercase tracking-widest text-white/50">{t.status.ready}</span>
+                </div>
               </div>
-            </div>
-            <div className="capability-console reveal" aria-label="DuarLabs capability overview">
-              <div className="console-topline">
-                <span>duarlabs.system</span>
-                <span>{t.status.ready}</span>
-              </div>
-              <div className="console-grid">
-                {t.metrics.map(([title, body]) => (
-                  <article key={title}>
-                    <span>{title}</span>
-                    <p>{body}</p>
-                  </article>
-                ))}
-              </div>
-              <div className="signal-map" aria-hidden="true">
-                <span />
-                <span />
-                <span />
-                <span />
-              </div>
-            </div>
+            </motion.div>
           </div>
         </section>
 
@@ -214,31 +230,6 @@ function HomePage({ t, lang, setLang, onNavigate }) {
           </div>
         </section>
 
-        <section className="content-band contact-band" id="contact">
-          <div className="container contact-grid">
-            <SectionIntro label={t.contact.label} title={t.contact.title} body={t.contact.body} />
-            <form className="contact-form reveal" onSubmit={(event) => event.preventDefault()}>
-              <label>
-                {t.contact.name}
-                <input type="text" name="name" autoComplete="name" />
-              </label>
-              <label>
-                {t.contact.company}
-                <input type="text" name="company" autoComplete="organization" />
-              </label>
-              <label>
-                {t.contact.email}
-                <input type="email" name="email" autoComplete="email" />
-              </label>
-              <label>
-                {t.contact.needs}
-                <textarea name="needs" rows="5" />
-              </label>
-              <button type="submit" className="button button-primary">
-                {t.contact.submit}
-              </button>
-            </form>
-          </div>
         </section>
       </main>
       <Footer t={t} lang={lang} setLang={setLang} onNavigate={onNavigate} />
@@ -262,7 +253,7 @@ function OrdoPage({ t, lang, setLang, onNavigate }) {
               <h1>{t.ordo.title}</h1>
               <p className="hero-body">{t.ordo.body}</p>
               <div className="hero-actions">
-                <a className="button button-primary" href="/#contact">
+                <a className="button button-primary" href="/#projects">
                   {t.ordo.primary}
                 </a>
                 <a className="button button-secondary" href="#ordo-architecture">
