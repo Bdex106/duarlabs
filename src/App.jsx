@@ -31,7 +31,7 @@ function Reveal({ children, className = '', direction = 'up' }) {
   const ref = useRef(null);
   const { scrollYProgress } = useScroll({
     target: ref,
-    offset: ['start 0.95', 'start 0.6'],
+    offset: ['start 0.98', 'start 0.5'],
   });
   const smooth = useSpring(scrollYProgress, { mass: 0.6, stiffness: 100, damping: 24 });
   
@@ -60,7 +60,7 @@ function StaggerContainer({ children, className = '', direction = 'right' }) {
   const ref = useRef(null);
   const { scrollYProgress } = useScroll({
     target: ref,
-    offset: ['start 0.95', 'start 0.5'],
+    offset: ['start 0.98', 'start 0.45'],
   });
   const smooth = useSpring(scrollYProgress, { mass: 0.8, stiffness: 80, damping: 22 });
   

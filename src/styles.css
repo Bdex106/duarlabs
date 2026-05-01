@@ -25,7 +25,11 @@
 
 *, *::before, *::after { box-sizing: border-box; }
 
-html { scroll-behavior: smooth; background: var(--bg); }
+html {
+  scroll-behavior: smooth;
+  background: var(--bg);
+  scroll-snap-type: y mandatory;
+}
 
 body {
   margin: 0; min-width: 320px; color: var(--paper);
@@ -88,7 +92,11 @@ img { display: block; max-width: 100%; }
 .language-toggle button.is-active { background: var(--paper); color: var(--ink); }
 
 /* ── Hero Parallax ── */
-.hero-parallax { position: relative; height: 200vh; }
+.hero-parallax {
+  position: relative;
+  height: 150vh;
+  scroll-snap-align: start;
+}
 .hero-sticky {
   position: sticky; top: 0; height: 100vh; width: 100%;
   display: flex; flex-direction: column; align-items: center; justify-content: center;
@@ -180,7 +188,15 @@ h3 { margin-bottom: 10px; color: var(--paper); font-size: 1.1rem; line-height: 1
 @keyframes pulse-dot { 0%, 100% { opacity: 0.6; } 50% { opacity: 1; } }
 
 /* ── Content Bands ── */
-.content-band { padding: clamp(80px, 10vw, 140px) 0; border-top: 1px solid var(--line); }
+.content-band {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  padding: 100px 0;
+  border-top: 1px solid var(--line);
+  scroll-snap-align: start;
+  position: relative;
+}
 .content-band.muted {
   background: linear-gradient(180deg, rgba(243,239,229,0.03), rgba(243,239,229,0.01)), var(--bg-2);
 }
@@ -338,7 +354,12 @@ h3 { margin-bottom: 10px; color: var(--paper); font-size: 1.1rem; line-height: 1
 .why-text { font-size: 0.95rem; }
 
 /* ── Footer ── */
-.site-footer { border-top: 1px solid var(--line); padding: 30px 0; background: #050505; }
+.site-footer {
+  border-top: 1px solid var(--line);
+  padding: 30px 0;
+  background: #050505;
+  scroll-snap-align: end;
+}
 .footer-grid { display: flex; align-items: center; justify-content: space-between; gap: 20px; }
 .footer-grid p { margin: 0; color: var(--muted); font-size: 0.85rem; }
 
