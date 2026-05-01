@@ -122,16 +122,42 @@ img { display: block; max-width: 100%; }
   mask-image: radial-gradient(ellipse 70% 60% at 50% 50%, black, transparent);
 }
 
+.mouse-glow {
+  position: fixed;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  background: radial-gradient(600px circle at var(--x, 50%) var(--y, 50%), rgba(199,174,120,0.08), transparent 80%);
+}
+
+.reveal-mask {
+  overflow: hidden;
+  display: block;
+}
+
 .hero-orb {
   position: absolute; border-radius: 50%; z-index: 0; pointer-events: none;
+  filter: blur(80px);
+  animation: orb-drift 20s infinite alternate ease-in-out;
 }
 .hero-orb-1 {
-  width: 600px; height: 600px; top: 10%; left: 20%;
-  background: radial-gradient(circle, rgba(199,174,120,0.18), transparent 70%);
+  width: 600px; height: 600px; top: -10%; left: -10%;
+  background: radial-gradient(circle, rgba(199,174,120,0.15), transparent 70%);
 }
 .hero-orb-2 {
-  width: 500px; height: 500px; bottom: 10%; right: 15%;
-  background: radial-gradient(circle, rgba(131,166,184,0.12), transparent 70%);
+  width: 500px; height: 500px; bottom: -5%; right: -5%;
+  background: radial-gradient(circle, rgba(131,166,184,0.1), transparent 70%);
+  animation-delay: -5s;
+}
+.hero-orb-3 {
+  width: 400px; height: 400px; top: 40%; left: 60%;
+  background: radial-gradient(circle, rgba(143,184,155,0.08), transparent 70%);
+  animation-delay: -10s;
+}
+
+@keyframes orb-drift {
+  0% { transform: translate(0, 0) scale(1); }
+  100% { transform: translate(40px, 60px) scale(1.1); }
 }
 
 .hero-content {

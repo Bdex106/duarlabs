@@ -31,27 +31,23 @@ function Reveal({ children, className = '', direction = 'up' }) {
   const ref = useRef(null);
   const { scrollYProgress } = useScroll({
     target: ref,
-    offset: ['start 0.98', 'start 0.5'],
+    offset: ['start 0.95', 'start 0.6'],
   });
   const smooth = useSpring(scrollYProgress, { mass: 0.6, stiffness: 100, damping: 24 });
   
-  // Transform values based on direction
   const xOffset = direction === 'left' ? -80 : direction === 'right' ? 80 : 0;
-  const yOffset = direction === 'up' ? 50 : 0;
+  const yOffset = direction === 'up' ? 80 : 0;
   
   const x = useTransform(smooth, [0, 1], [xOffset, 0]);
   const y = useTransform(smooth, [0, 1], [yOffset, 0]);
   const opacity = useTransform(smooth, [0, 1], [0, 1]);
-  const scale = useTransform(smooth, [0, 1], [0.95, 1]);
 
   return (
-    <motion.div
-      ref={ref}
-      className={className}
-      style={{ opacity, x, y, scale, hide: { opacity: 0 }, willChange: 'transform, opacity' }}
-    >
-      {children}
-    </motion.div>
+    <div ref={ref} className={`reveal-mask ${className}`}>
+      <motion.div style={{ opacity, x, y, willChange: 'transform, opacity' }}>
+        {children}
+      </motion.div>
+    </div>
   );
 }
 
@@ -84,6 +80,22 @@ function StaggerContainer({ children, className = '', direction = 'right' }) {
 function StaggerItem({ children, className = '' }) {
   return (
     <div className={className}>
+      {children}
+    </div>
+  );
+}
+
+/* ── Interactive Card ── */
+function InteractiveCard({ children, className = '' }) {
+  const cardRef = useRef(null);
+  const handleMouseMove = (e) => {
+    if (!cardRef.current) return;
+    const rect = cardRef.current.getBoundingClientRect();
+    cardRef.current.style.setProperty('--mx', `${e.clientX - rect.left}px`);
+    cardRef.current.style.setProperty('--my', `${e.clientY - rect.top}px`);
+  };
+  return (
+    <div ref={cardRef} onMouseMove={handleMouseMove} className={className}>
       {children}
     </div>
   );
@@ -229,6 +241,18 @@ function ScrollIndicator() {
 /* ── HomePage ── */
 function HomePage({ t, lang, setLang, onNavigate }) {
   const heroRef = useRef(null);
+  const containerRef = useRef(null);
+
+  useEffect(() => {
+    const handleMouseMove = (e) => {
+      if (!containerRef.current) return;
+      containerRef.current.style.setProperty('--x', `${e.clientX}px`);
+      containerRef.current.style.setProperty('--y', `${e.clientY}px`);
+    };
+    window.addEventListener('mousemove', handleMouseMove);
+    return () => window.removeEventListener('mousemove', handleMouseMove);
+  }, []);
+
   const { scrollYProgress } = useScroll({
     target: heroRef,
     offset: ['start start', 'end start'],
@@ -248,11 +272,17 @@ function HomePage({ t, lang, setLang, onNavigate }) {
   const gridOpacity = useTransform(smoothProgress, [0, 0.3], [0.4, 0]);
 
   return (
-    <>
+    <div ref={containerRef}>
       <Header t={t} lang={lang} setLang={setLang} onNavigate={onNavigate} />
       <ProgressBar />
       <SideNav />
+      <div className="mouse-glow" />
       <main>
+        {/* Background Orbs */}
+        <div className="hero-orb hero-orb-1" />
+        <div className="hero-orb hero-orb-2" />
+        <div className="hero-orb hero-orb-3" />
+
         {/* ── Hero with Parallax Dissolve ── */}
         <section ref={heroRef} className="hero-parallax" id="home">
           <div className="hero-sticky">
@@ -375,7 +405,7 @@ function HomePage({ t, lang, setLang, onNavigate }) {
             <StaggerContainer className="card-grid" direction="right">
               {t.capabilities.map((capability, i) => (
                 <StaggerItem key={capability.title}>
-                  <article className="premium-card">
+                  <InteractiveCard className="premium-card">
                     <div className="card-header">
                       <p className="card-index">0{i + 1}</p>
                       <div className="card-glow" />
@@ -387,7 +417,7 @@ function HomePage({ t, lang, setLang, onNavigate }) {
                         <li key={item}>{item}</li>
                       ))}
                     </ul>
-                  </article>
+                  </InteractiveCard>
                 </StaggerItem>
               ))}
             </StaggerContainer>
@@ -401,7 +431,7 @@ function HomePage({ t, lang, setLang, onNavigate }) {
             <StaggerContainer className="project-grid" direction="right">
               {t.projects.items.map((project, index) => (
                 <StaggerItem key={project.title}>
-                  <article className="project-card">
+                  <InteractiveCard className="project-card">
                     <div className={`project-visual project-visual-${index + 1}`}>
                       <span>{project.tone}</span>
                       <strong>{project.title}</strong>
@@ -418,7 +448,7 @@ function HomePage({ t, lang, setLang, onNavigate }) {
                         <span className="text-link text-link-muted">{t.projects.internalCta}</span>
                       )}
                     </div>
-                  </article>
+                  </InteractiveCard>
                 </StaggerItem>
               ))}
             </StaggerContainer>
