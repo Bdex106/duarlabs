@@ -81,17 +81,20 @@ function StaggerItem({ children, className = '' }) {
 
 /* ── SmartLink ── */
 function SmartLink({ href, onNavigate, children, className, ...props }) {
-  const isInternal = href?.startsWith('/');
+  const isExternal = href?.startsWith('http');
+  const isStaticFile = href?.includes('/ordo-data/');
 
   function handleClick(event) {
-    if (href?.includes('/ordo-data/index.html')) return;
-    if (!isInternal) return;
+    if (isExternal || isStaticFile) return; // let the browser handle it
+    if (!href?.startsWith('/')) return;
     event.preventDefault();
     onNavigate(href);
   }
 
+  const extraProps = isExternal ? { target: '_blank', rel: 'noopener noreferrer' } : {};
+
   return (
-    <a href={href} onClick={handleClick} className={className} {...props}>
+    <a href={href} onClick={handleClick} className={className} {...props} {...extraProps}>
       {children}
     </a>
   );
@@ -353,7 +356,7 @@ function HomePage({ t, lang, setLang, onNavigate }) {
                       <h3>{project.title}</h3>
                       <p>{project.body}</p>
                       {project.href ? (
-                        <SmartLink href={project.href} onNavigate={onNavigate} className="text-link" target="_blank" rel="noopener noreferrer">
+                        <SmartLink href={project.href} onNavigate={onNavigate} className="text-link">
                           {t.projects.cta}
                           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M7 17L17 7M17 7H7M17 7v10"/></svg>
                         </SmartLink>
