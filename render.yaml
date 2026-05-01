@@ -3,7 +3,7 @@ services:
     name: duarlabs
     runtime: node
     buildCommand: npm install && npm run build
-    startCommand: npx serve dist -p $PORT -c ../serve.json
+    startCommand: npx serve dist -p $PORT
     envVars:
       - key: NODE_VERSION
         value: 20
