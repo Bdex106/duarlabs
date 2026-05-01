@@ -155,6 +155,48 @@ function Header({ t, lang, setLang, onNavigate }) {
   );
 }
 
+/* ── Progress Bar ── */
+function ProgressBar() {
+  const { scrollYProgress } = useScroll();
+  const scaleX = useSpring(scrollYProgress, { stiffness: 100, damping: 30, restDelta: 0.001 });
+  return <motion.div className="progress-bar" style={{ scaleX }} />;
+}
+
+/* ── Side Nav ── */
+function SideNav() {
+  const sections = ['home', 'about', 'technologies', 'capabilities', 'projects', 'why'];
+  const [active, setActive] = useState('home');
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) setActive(entry.target.id);
+        });
+      },
+      { threshold: 0.5 }
+    );
+    sections.forEach((id) => {
+      const el = document.getElementById(id);
+      if (el) observer.observe(el);
+    });
+    return () => observer.disconnect();
+  }, []);
+
+  return (
+    <div className="side-nav">
+      {sections.map((id) => (
+        <a
+          key={id}
+          href={`#${id}`}
+          className={`side-nav-dot ${active === id ? 'is-active' : ''}`}
+          aria-label={`Scroll to ${id}`}
+        />
+      ))}
+    </div>
+  );
+}
+
 /* ── Section Intro ── */
 function SectionIntro({ label, title, body, direction = 'up' }) {
   return (
@@ -208,6 +250,8 @@ function HomePage({ t, lang, setLang, onNavigate }) {
   return (
     <>
       <Header t={t} lang={lang} setLang={setLang} onNavigate={onNavigate} />
+      <ProgressBar />
+      <SideNav />
       <main>
         {/* ── Hero with Parallax Dissolve ── */}
         <section ref={heroRef} className="hero-parallax" id="home">
