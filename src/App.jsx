@@ -26,45 +26,54 @@ function useRoute() {
   return { path, navigate };
 }
 
-/* ── Scroll-linked reveal with spring physics ── */
-function Reveal({ children, className = '', delay = 0 }) {
+/* ── Scroll-linked reveal with lateral convergence ── */
+function Reveal({ children, className = '', direction = 'up' }) {
   const ref = useRef(null);
   const { scrollYProgress } = useScroll({
     target: ref,
-    offset: ['start 0.95', 'start 0.55'],
+    offset: ['start 0.95', 'start 0.6'],
   });
-  const smooth = useSpring(scrollYProgress, { mass: 0.6, stiffness: 100, damping: 22 });
-  const y = useTransform(smooth, [0, 1], [50, 0]);
+  const smooth = useSpring(scrollYProgress, { mass: 0.6, stiffness: 100, damping: 24 });
+  
+  // Transform values based on direction
+  const xOffset = direction === 'left' ? -80 : direction === 'right' ? 80 : 0;
+  const yOffset = direction === 'up' ? 50 : 0;
+  
+  const x = useTransform(smooth, [0, 1], [xOffset, 0]);
+  const y = useTransform(smooth, [0, 1], [yOffset, 0]);
   const opacity = useTransform(smooth, [0, 1], [0, 1]);
-  const scale = useTransform(smooth, [0, 1], [0.97, 1]);
+  const scale = useTransform(smooth, [0, 1], [0.95, 1]);
 
   return (
     <motion.div
       ref={ref}
       className={className}
-      style={{ opacity, y, scale, willChange: 'transform, opacity' }}
+      style={{ opacity, x, y, scale, hide: { opacity: 0 }, willChange: 'transform, opacity' }}
     >
       {children}
     </motion.div>
   );
 }
 
-/* ── Stagger children with scroll-linked spring ── */
-function StaggerContainer({ children, className = '' }) {
+/* ── Stagger container with spatial integration ── */
+function StaggerContainer({ children, className = '', direction = 'right' }) {
   const ref = useRef(null);
   const { scrollYProgress } = useScroll({
     target: ref,
-    offset: ['start 0.92', 'start 0.45'],
+    offset: ['start 0.95', 'start 0.5'],
   });
-  const smooth = useSpring(scrollYProgress, { mass: 0.7, stiffness: 90, damping: 20 });
+  const smooth = useSpring(scrollYProgress, { mass: 0.8, stiffness: 80, damping: 22 });
+  
+  const xOffset = direction === 'left' ? -100 : direction === 'right' ? 100 : 0;
+  const x = useTransform(smooth, [0, 1], [xOffset, 0]);
   const opacity = useTransform(smooth, [0, 1], [0, 1]);
-  const y = useTransform(smooth, [0, 1], [60, 0]);
+  const scale = useTransform(smooth, [0, 1], [0.9, 1]);
 
   return (
     <motion.div
       ref={ref}
       className={className}
-      style={{ opacity, y, willChange: 'transform, opacity' }}
+      style={{ opacity, x, scale, willChange: 'transform, opacity' }}
     >
       {children}
     </motion.div>
@@ -147,9 +156,9 @@ function Header({ t, lang, setLang, onNavigate }) {
 }
 
 /* ── Section Intro ── */
-function SectionIntro({ label, title, body, delay = 0 }) {
+function SectionIntro({ label, title, body, direction = 'up' }) {
   return (
-    <Reveal className="section-intro" delay={delay}>
+    <Reveal className="section-intro" direction={direction}>
       <p className="eyebrow">{label}</p>
       <h2>{title}</h2>
       {body && <p>{body}</p>}
@@ -280,8 +289,8 @@ function HomePage({ t, lang, setLang, onNavigate }) {
         <section className="content-band" id="about">
           <div className="container">
             <div className="metrics-row">
-              <SectionIntro label={t.about.label} title={t.about.title} body={t.about.body} />
-              <StaggerContainer className="console-strip">
+              <SectionIntro label={t.about.label} title={t.about.title} body={t.about.body} direction="left" />
+              <StaggerContainer className="console-strip" direction="right">
                 {t.metrics.map(([title, body]) => (
                   <StaggerItem key={title} className="metric-card">
                     <span className="metric-label">{title}</span>
@@ -304,8 +313,8 @@ function HomePage({ t, lang, setLang, onNavigate }) {
         {/* ── Technologies ── */}
         <section className="content-band muted" id="technologies">
           <div className="container">
-            <SectionIntro label={t.labels.technologies} title={t.techTitle} />
-            <StaggerContainer className="tech-grid">
+            <SectionIntro label={t.labels.technologies} title={t.techTitle} direction="left" />
+            <StaggerContainer className="tech-grid" direction="right">
               {t.technologies.map((tech) => (
                 <StaggerItem key={tech}>
                   <span className="tech-chip">{tech}</span>
@@ -318,8 +327,8 @@ function HomePage({ t, lang, setLang, onNavigate }) {
         {/* ── Capabilities ── */}
         <section className="content-band" id="capabilities">
           <div className="container">
-            <SectionIntro label={t.labels.services} title={t.capabilitiesTitle} />
-            <StaggerContainer className="card-grid">
+            <SectionIntro label={t.labels.services} title={t.capabilitiesTitle} direction="left" />
+            <StaggerContainer className="card-grid" direction="right">
               {t.capabilities.map((capability, i) => (
                 <StaggerItem key={capability.title}>
                   <article className="premium-card">
@@ -344,8 +353,8 @@ function HomePage({ t, lang, setLang, onNavigate }) {
         {/* ── Projects ── */}
         <section className="content-band muted" id="projects">
           <div className="container">
-            <SectionIntro label={t.projects.label} title={t.projects.title} body={t.projects.body} />
-            <StaggerContainer className="project-grid">
+            <SectionIntro label={t.projects.label} title={t.projects.title} body={t.projects.body} direction="left" />
+            <StaggerContainer className="project-grid" direction="right">
               {t.projects.items.map((project, index) => (
                 <StaggerItem key={project.title}>
                   <article className="project-card">
@@ -375,8 +384,8 @@ function HomePage({ t, lang, setLang, onNavigate }) {
         {/* ── Why ── */}
         <section className="content-band" id="why">
           <div className="container split">
-            <SectionIntro label={t.why.label} title={t.why.title} />
-            <StaggerContainer className="why-grid">
+            <SectionIntro label={t.why.label} title={t.why.title} direction="left" />
+            <StaggerContainer className="why-grid" direction="right">
               {t.why.items.map((item, i) => (
                 <StaggerItem key={item}>
                   <div className="why-item">
