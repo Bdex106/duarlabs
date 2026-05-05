@@ -264,9 +264,11 @@ function HomePage({ t, lang, setLang, onNavigate }) {
   }, []);
 
   return (
-    <>
+    <div ref={containerRef}>
       <Header t={t} lang={lang} setLang={setLang} onNavigate={onNavigate} />
       <ProgressBar />
+      <SideNav />
+      <div className="mouse-glow" />
       <main>
         {/* ── Hero with Parallax Dissolve ── */}
         <section ref={heroRef} className="hero-parallax" id="home">
@@ -462,8 +464,9 @@ function HomePage({ t, lang, setLang, onNavigate }) {
             </StaggerContainer>
           </div>
         </section>
+      </main>
       <Footer t={t} lang={lang} setLang={setLang} onNavigate={onNavigate} />
-    </>
+    </div>
   );
 }
 
