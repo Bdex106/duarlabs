@@ -4,7 +4,6 @@ export const copy = {
       work: 'Proyectos',
       capabilities: 'Capacidades',
       why: 'Por que DuarLabs',
-      contact: 'Contacto',
     },
     status: {
       ready: 'listo',
@@ -16,6 +15,12 @@ export const copy = {
       body: 'Construimos soluciones digitales, automatizacion, plataformas internas, herramientas de datos e integraciones para organizaciones que necesitan precision tecnica y ejecucion confiable.',
       primary: 'Ver proyectos',
       secondary: 'Contactar',
+      arch: {
+        discovery: 'Diagnostico',
+        systems: 'Sistemas',
+        automation: 'Automatizacion',
+        data: 'Datos',
+      },
     },
     metrics: [
       ['Arquitectura', 'Sistemas preparados para crecer sin rehacer la base.'],
@@ -187,7 +192,6 @@ export const copy = {
       work: 'Projects',
       capabilities: 'Capabilities',
       why: 'Why DuarLabs',
-      contact: 'Contact',
     },
     status: {
       ready: 'ready',
@@ -199,6 +203,12 @@ export const copy = {
       body: 'We build digital products, automation systems, internal platforms, data tools, and integrations for organizations that require technical precision and dependable execution.',
       primary: 'View projects',
       secondary: 'Contact us',
+      arch: {
+        discovery: 'Discovery',
+        systems: 'Systems',
+        automation: 'Automation',
+        data: 'Data',
+      },
     },
     metrics: [
       ['Architecture', 'Systems prepared to scale without rebuilding the foundation.'],

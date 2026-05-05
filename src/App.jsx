@@ -56,7 +56,7 @@ function StaggerContainer({ children, className = '', direction = 'right' }) {
   const ref = useRef(null);
   const { scrollYProgress } = useScroll({
     target: ref,
-    offset: ['start 0.98', 'start 0.45'],
+    offset: ['start 0.95', 'start 0.5'],
   });
   const smooth = useSpring(scrollYProgress, { mass: 0.8, stiffness: 80, damping: 22 });
   
@@ -76,7 +76,6 @@ function StaggerContainer({ children, className = '', direction = 'right' }) {
   );
 }
 
-/* ── Stagger items (static, parent handles scroll) ── */
 function StaggerItem({ children, className = '' }) {
   return (
     <div className={className}>
@@ -223,18 +222,9 @@ function SectionIntro({ label, title, body, direction = 'up' }) {
 /* ── Scroll indicator ── */
 function ScrollIndicator() {
   return (
-    <motion.div
-      className="scroll-indicator"
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      transition={{ delay: 1.5, duration: 0.8 }}
-    >
-      <motion.div
-        className="scroll-dot"
-        animate={{ y: [0, 10, 0] }}
-        transition={{ repeat: Infinity, duration: 1.6, ease: 'easeInOut' }}
-      />
-    </motion.div>
+    <div className="scroll-indicator">
+      <div className="scroll-dot" />
+    </div>
   );
 }
 
@@ -253,107 +243,84 @@ function HomePage({ t, lang, setLang, onNavigate }) {
     return () => window.removeEventListener('mousemove', handleMouseMove);
   }, []);
 
-  const { scrollYProgress } = useScroll({
-    target: heroRef,
-    offset: ['start start', 'end start'],
-  });
-
-  const smoothProgress = useSpring(scrollYProgress, {
-    mass: 0.8,
-    stiffness: 80,
-    damping: 20,
-  });
-
-  const orbScale = useTransform(smoothProgress, [0, 0.4], [1, 1.4]);
-  const orbOpacity = useTransform(smoothProgress, [0, 0.35], [0.5, 0]);
-  const orbBlur = useTransform(smoothProgress, [0, 0.35], ['blur(0px)', 'blur(30px)']);
-  const titleY = useTransform(smoothProgress, [0, 0.5], [0, -140]);
-  const titleOpacity = useTransform(smoothProgress, [0, 0.4], [1, 0]);
-  const gridOpacity = useTransform(smoothProgress, [0, 0.3], [0.4, 0]);
+  useEffect(() => {
+    const update = () => {
+      if (!heroRef.current) return;
+      const rect = heroRef.current.getBoundingClientRect();
+      const total = heroRef.current.offsetHeight - window.innerHeight;
+      const progress = total > 0 ? Math.min(1, Math.max(0, -rect.top / total)) : 0;
+      heroRef.current.style.setProperty('--hero-progress', String(progress));
+      heroRef.current.style.setProperty('--hero-content-opacity', String(1 - Math.min(progress * 2.5, 1)));
+      heroRef.current.style.setProperty('--hero-arch-opacity', String(1 - Math.min(progress * 2.8, 1)));
+      heroRef.current.style.setProperty('--hero-grid-opacity', String(0.22 * (1 - Math.min(progress * 3.3, 1))));
+    };
+    update();
+    window.addEventListener('scroll', update, { passive: true });
+    window.addEventListener('resize', update);
+    return () => {
+      window.removeEventListener('scroll', update);
+      window.removeEventListener('resize', update);
+    };
+  }, []);
 
   return (
-    <div ref={containerRef}>
+    <>
       <Header t={t} lang={lang} setLang={setLang} onNavigate={onNavigate} />
       <ProgressBar />
-      <SideNav />
-      <div className="mouse-glow" />
       <main>
-        {/* Background Orbs */}
-        <div className="hero-orb hero-orb-1" />
-        <div className="hero-orb hero-orb-2" />
-        <div className="hero-orb hero-orb-3" />
-
         {/* ── Hero with Parallax Dissolve ── */}
         <section ref={heroRef} className="hero-parallax" id="home">
           <div className="hero-sticky">
             {/* Animated grid background */}
-            <motion.div className="hero-grid-bg" style={{ opacity: gridOpacity }} />
+            <div className="hero-grid-bg" />
 
-            {/* Parallax orbs */}
-            <motion.div
-              className="hero-orb hero-orb-1"
-              style={{ scale: orbScale, opacity: orbOpacity, filter: orbBlur }}
-            />
-            <motion.div
-              className="hero-orb hero-orb-2"
-              style={{ scale: orbScale, opacity: orbOpacity, filter: orbBlur }}
-            />
+            {/* Corporate architecture panel */}
+            <div
+              className="hero-architecture"
+              aria-hidden="true"
+            >
+              <div className="arch-panel arch-panel-main">
+                <span>{t.hero.arch.discovery}</span>
+                <strong>{t.hero.arch.systems}</strong>
+              </div>
+              <div className="arch-panel arch-panel-side">
+                <span>{t.hero.arch.automation}</span>
+                <strong>{t.hero.arch.data}</strong>
+              </div>
+              <div className="arch-line arch-line-a" />
+              <div className="arch-line arch-line-b" />
+              <div className="arch-node arch-node-a" />
+              <div className="arch-node arch-node-b" />
+              <div className="arch-node arch-node-c" />
+            </div>
 
             {/* Content */}
-            <motion.div
-              className="hero-content"
-              style={{ opacity: titleOpacity, y: titleY }}
-            >
-              <motion.p
-                className="eyebrow"
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.2, duration: 0.6 }}
-              >
+            <div className="hero-content">
+              <p className="eyebrow">
                 {t.hero.eyebrow}
-              </motion.p>
+              </p>
 
-              <motion.h1
-                initial={{ opacity: 0, y: 30 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.35, duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
-              >
+              <h1>
                 {t.hero.title}
-              </motion.h1>
+              </h1>
 
-              <motion.p
-                className="hero-slogan"
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.55, duration: 0.7 }}
-              >
+              <p className="hero-slogan">
                 {t.hero.slogan}
-              </motion.p>
+              </p>
 
-              <motion.p
-                className="hero-body"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ delay: 0.7, duration: 0.7 }}
-              >
+              <p className="hero-body">
                 {t.hero.body}
-              </motion.p>
+              </p>
 
-              <motion.div
-                className="hero-actions"
-                initial={{ opacity: 0, y: 12 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.85, duration: 0.6 }}
-              >
+              <div className="hero-actions">
                 <a className="button button-primary" href="#projects">
                   {t.hero.primary}
                 </a>
-                <div className="status-pill">
-                  <span className="status-dot" />
-                  <span>{t.status.ready}</span>
-                </div>
-              </motion.div>
-            </motion.div>
+                <a className="button button-secondary" href="#contact">
+                  {t.hero.secondary}
+                </a>
+              </div>
+            </div>
 
             <ScrollIndicator />
           </div>
@@ -471,7 +438,6 @@ function HomePage({ t, lang, setLang, onNavigate }) {
             </StaggerContainer>
           </div>
         </section>
-      </main>
       <Footer t={t} lang={lang} setLang={setLang} onNavigate={onNavigate} />
     </>
   );
