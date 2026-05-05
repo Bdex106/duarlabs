@@ -271,14 +271,38 @@ function HomePage({ t, lang, setLang, onNavigate }) {
         {/* ── Hero with Parallax Dissolve ── */}
         <section ref={heroRef} className="hero-parallax" id="home">
           <div className="hero-sticky">
-            {/* Animated grid background */}
-            <div className="hero-grid-bg" />
+            {/* Parallax orbs */}
+            <motion.div
+              className="hero-orb hero-orb-1"
+              style={{ scale: orbScale, opacity: orbOpacity, filter: orbBlur }}
+            />
+            <motion.div
+              className="hero-orb hero-orb-2"
+              style={{ scale: orbScale, opacity: orbOpacity, filter: orbBlur }}
+            />
 
-            {/* Corporate architecture panel */}
-            <div
-              className="hero-architecture"
-              aria-hidden="true"
-            >
+            {/* Technical Architecture Overlay (Codex) */}
+            <div className="hero-architecture" aria-hidden="true">
+              <div className="arch-panel arch-panel-main">
+                <span>{t.hero.arch.discovery}</span>
+                <strong>{t.hero.arch.systems}</strong>
+              </div>
+              <div className="arch-panel arch-panel-sub">
+                <span>{t.hero.arch.automation}</span>
+                <strong>{t.hero.arch.data}</strong>
+              </div>
+              <div className="arch-line arch-line-v arch-line-1" />
+              <div className="arch-line arch-line-v arch-line-2" />
+              <div className="arch-line arch-line-h arch-line-3" />
+              <div className="arch-line arch-line-h arch-line-4" />
+              <div className="arch-box" />
+              <div className="arch-node arch-node-a" />
+              <div className="arch-node arch-node-b" />
+              <div className="arch-node arch-node-c" />
+            </div>
+
+            {/* Content */}
+            <div className="hero-content">
               <div className="arch-panel arch-panel-main">
                 <span>{t.hero.arch.discovery}</span>
                 <strong>{t.hero.arch.systems}</strong>
