@@ -4,6 +4,7 @@ export const copy = {
       work: 'Proyectos',
       capabilities: 'Capacidades',
       why: 'Por que DuarLabs',
+      contact: 'Contacto',
     },
     status: {
       ready: 'listo',
@@ -192,6 +193,7 @@ export const copy = {
       work: 'Projects',
       capabilities: 'Capabilities',
       why: 'Why DuarLabs',
+      contact: 'Contact',
     },
     status: {
       ready: 'ready',

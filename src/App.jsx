@@ -160,6 +160,7 @@ function Header({ t, lang, setLang, onNavigate }) {
         <a href="/#projects">{t.nav.work}</a>
         <a href="/#capabilities">{t.nav.capabilities}</a>
         <a href="/#why">{t.nav.why}</a>
+        <a href="/#contact">{t.nav.contact}</a>
       </nav>
       <LanguageToggle lang={lang} setLang={setLang} />
     </header>
@@ -243,49 +244,42 @@ function HomePage({ t, lang, setLang, onNavigate }) {
     return () => window.removeEventListener('mousemove', handleMouseMove);
   }, []);
 
-  const { scrollYProgress } = useScroll({
-    target: heroRef,
-    offset: ['start start', 'end start'],
-  });
-
-  const smoothProgress = useSpring(scrollYProgress, {
-    mass: 0.8,
-    stiffness: 80,
-    damping: 20,
-  });
-
-  const orbScale = useTransform(smoothProgress, [0, 0.4], [1, 1.4]);
-  const orbOpacity = useTransform(smoothProgress, [0, 0.35], [0.5, 0]);
-  const orbBlur = useTransform(smoothProgress, [0, 0.35], ['blur(0px)', 'blur(30px)']);
-  const titleY = useTransform(smoothProgress, [0, 0.5], [0, -140]);
-  const titleOpacity = useTransform(smoothProgress, [0, 0.4], [1, 0]);
-  const gridOpacity = useTransform(smoothProgress, [0, 0.3], [0.4, 0]);
+  useEffect(() => {
+    const update = () => {
+      if (!heroRef.current) return;
+      const rect = heroRef.current.getBoundingClientRect();
+      const total = heroRef.current.offsetHeight - window.innerHeight;
+      const progress = total > 0 ? Math.min(1, Math.max(0, -rect.top / total)) : 0;
+      heroRef.current.style.setProperty('--hero-progress', String(progress));
+      heroRef.current.style.setProperty('--hero-content-opacity', String(1 - Math.min(progress * 2.5, 1)));
+      heroRef.current.style.setProperty('--hero-arch-opacity', String(1 - Math.min(progress * 2.8, 1)));
+      heroRef.current.style.setProperty('--hero-grid-opacity', String(0.22 * (1 - Math.min(progress * 3.3, 1))));
+    };
+    update();
+    window.addEventListener('scroll', update, { passive: true });
+    window.addEventListener('resize', update);
+    return () => {
+      window.removeEventListener('scroll', update);
+      window.removeEventListener('resize', update);
+    };
+  }, []);
 
   return (
-    <div ref={containerRef}>
+    <>
       <Header t={t} lang={lang} setLang={setLang} onNavigate={onNavigate} />
       <ProgressBar />
-      <SideNav />
-      <div className="mouse-glow" />
       <main>
         {/* ── Hero with Parallax Dissolve ── */}
         <section ref={heroRef} className="hero-parallax" id="home">
           <div className="hero-sticky">
             {/* Animated grid background */}
-            <motion.div className="hero-grid-bg" style={{ opacity: gridOpacity }} />
+            <div className="hero-grid-bg" />
 
-            {/* Parallax orbs */}
-            <motion.div
-              className="hero-orb hero-orb-1"
-              style={{ scale: orbScale, opacity: orbOpacity, filter: orbBlur }}
-            />
-            <motion.div
-              className="hero-orb hero-orb-2"
-              style={{ scale: orbScale, opacity: orbOpacity, filter: orbBlur }}
-            />
-
-            {/* Technical Architecture Overlay (Codex) */}
-            <div className="hero-architecture" aria-hidden="true">
+            {/* Corporate architecture panel */}
+            <div
+              className="hero-architecture"
+              aria-hidden="true"
+            >
               <div className="arch-panel arch-panel-main">
                 <span>{t.hero.arch.discovery}</span>
                 <strong>{t.hero.arch.systems}</strong>
@@ -294,21 +288,15 @@ function HomePage({ t, lang, setLang, onNavigate }) {
                 <span>{t.hero.arch.automation}</span>
                 <strong>{t.hero.arch.data}</strong>
               </div>
-              <div className="arch-line arch-line-v arch-line-1" />
-              <div className="arch-line arch-line-v arch-line-2" />
-              <div className="arch-line arch-line-h arch-line-3" />
-              <div className="arch-line arch-line-h arch-line-4" />
-              <div className="arch-box" />
+              <div className="arch-line arch-line-a" />
+              <div className="arch-line arch-line-b" />
               <div className="arch-node arch-node-a" />
               <div className="arch-node arch-node-b" />
               <div className="arch-node arch-node-c" />
             </div>
 
             {/* Content */}
-            <motion.div
-              className="hero-content"
-              style={{ opacity: titleOpacity, y: titleY }}
-            >
+            <div className="hero-content">
               <p className="eyebrow">
                 {t.hero.eyebrow}
               </p>
@@ -329,13 +317,13 @@ function HomePage({ t, lang, setLang, onNavigate }) {
                 <a href="#projects" className="button button-primary">
                   {t.hero.primary}
                 </a>
-                <a href="#capabilities" className="button">
+                <a href="#contact" className="button">
                   {t.hero.secondary}
                 </a>
               </div>
 
               <ScrollIndicator />
-            </motion.div>
+            </div>
           </div>
         </section>
 
@@ -451,9 +439,37 @@ function HomePage({ t, lang, setLang, onNavigate }) {
             </StaggerContainer>
           </div>
         </section>
+
+        {/* ── Contact ── */}
+        <section className="content-band contact-band" id="contact">
+          <div className="container contact-grid">
+            <SectionIntro label={t.contact.label} title={t.contact.title} body={t.contact.body} direction="left" />
+            <form className="contact-form" onSubmit={(event) => event.preventDefault()}>
+              <label>
+                {t.contact.name}
+                <input type="text" name="name" autoComplete="name" />
+              </label>
+              <label>
+                {t.contact.company}
+                <input type="text" name="company" autoComplete="organization" />
+              </label>
+              <label>
+                {t.contact.email}
+                <input type="email" name="email" autoComplete="email" />
+              </label>
+              <label>
+                {t.contact.needs}
+                <textarea name="needs" rows="5" />
+              </label>
+              <button type="submit" className="button button-primary">
+                {t.contact.submit}
+              </button>
+            </form>
+          </div>
+        </section>
       </main>
       <Footer t={t} lang={lang} setLang={setLang} onNavigate={onNavigate} />
-    </div>
+    </>
   );
 }
 
