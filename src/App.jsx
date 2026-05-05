@@ -243,25 +243,23 @@ function HomePage({ t, lang, setLang, onNavigate }) {
     return () => window.removeEventListener('mousemove', handleMouseMove);
   }, []);
 
-  useEffect(() => {
-    const update = () => {
-      if (!heroRef.current) return;
-      const rect = heroRef.current.getBoundingClientRect();
-      const total = heroRef.current.offsetHeight - window.innerHeight;
-      const progress = total > 0 ? Math.min(1, Math.max(0, -rect.top / total)) : 0;
-      heroRef.current.style.setProperty('--hero-progress', String(progress));
-      heroRef.current.style.setProperty('--hero-content-opacity', String(1 - Math.min(progress * 2.5, 1)));
-      heroRef.current.style.setProperty('--hero-arch-opacity', String(1 - Math.min(progress * 2.8, 1)));
-      heroRef.current.style.setProperty('--hero-grid-opacity', String(0.22 * (1 - Math.min(progress * 3.3, 1))));
-    };
-    update();
-    window.addEventListener('scroll', update, { passive: true });
-    window.addEventListener('resize', update);
-    return () => {
-      window.removeEventListener('scroll', update);
-      window.removeEventListener('resize', update);
-    };
-  }, []);
+  const { scrollYProgress } = useScroll({
+    target: heroRef,
+    offset: ['start start', 'end start'],
+  });
+
+  const smoothProgress = useSpring(scrollYProgress, {
+    mass: 0.8,
+    stiffness: 80,
+    damping: 20,
+  });
+
+  const orbScale = useTransform(smoothProgress, [0, 0.4], [1, 1.4]);
+  const orbOpacity = useTransform(smoothProgress, [0, 0.35], [0.5, 0]);
+  const orbBlur = useTransform(smoothProgress, [0, 0.35], ['blur(0px)', 'blur(30px)']);
+  const titleY = useTransform(smoothProgress, [0, 0.5], [0, -140]);
+  const titleOpacity = useTransform(smoothProgress, [0, 0.4], [1, 0]);
+  const gridOpacity = useTransform(smoothProgress, [0, 0.3], [0.4, 0]);
 
   return (
     <div ref={containerRef}>
@@ -273,6 +271,9 @@ function HomePage({ t, lang, setLang, onNavigate }) {
         {/* ── Hero with Parallax Dissolve ── */}
         <section ref={heroRef} className="hero-parallax" id="home">
           <div className="hero-sticky">
+            {/* Animated grid background */}
+            <motion.div className="hero-grid-bg" style={{ opacity: gridOpacity }} />
+
             {/* Parallax orbs */}
             <motion.div
               className="hero-orb hero-orb-1"
@@ -304,24 +305,10 @@ function HomePage({ t, lang, setLang, onNavigate }) {
             </div>
 
             {/* Content */}
-            <div className="hero-content">
-              <div className="arch-panel arch-panel-main">
-                <span>{t.hero.arch.discovery}</span>
-                <strong>{t.hero.arch.systems}</strong>
-              </div>
-              <div className="arch-panel arch-panel-side">
-                <span>{t.hero.arch.automation}</span>
-                <strong>{t.hero.arch.data}</strong>
-              </div>
-              <div className="arch-line arch-line-a" />
-              <div className="arch-line arch-line-b" />
-              <div className="arch-node arch-node-a" />
-              <div className="arch-node arch-node-b" />
-              <div className="arch-node arch-node-c" />
-            </div>
-
-            {/* Content */}
-            <div className="hero-content">
+            <motion.div
+              className="hero-content"
+              style={{ opacity: titleOpacity, y: titleY }}
+            >
               <p className="eyebrow">
                 {t.hero.eyebrow}
               </p>
@@ -339,16 +326,16 @@ function HomePage({ t, lang, setLang, onNavigate }) {
               </p>
 
               <div className="hero-actions">
-                <a className="button button-primary" href="#projects">
+                <a href="#projects" className="button button-primary">
                   {t.hero.primary}
                 </a>
-                <a className="button button-secondary" href="#contact">
+                <a href="#capabilities" className="button">
                   {t.hero.secondary}
                 </a>
               </div>
-            </div>
 
-            <ScrollIndicator />
+              <ScrollIndicator />
+            </motion.div>
           </div>
         </section>
 
