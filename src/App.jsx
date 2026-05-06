@@ -158,6 +158,7 @@ function Header({ t, lang, setLang, onNavigate }) {
       </SmartLink>
       <nav className="desktop-nav" aria-label="Primary navigation">
         <a href="/#projects">{t.nav.work}</a>
+        <a href="/#presentation">{t.nav.presentation}</a>
         <a href="/#capabilities">{t.nav.capabilities}</a>
         <a href="/#why">{t.nav.why}</a>
         <a href="/#contact">{t.nav.contact}</a>
@@ -349,6 +350,67 @@ function HomePage({ t, lang, setLang, onNavigate }) {
                 ))}
               </div>
             </Reveal>
+          </div>
+        </section>
+
+        {/* ── Presentation Section ── */}
+        <section className="content-band muted presentation-band" id="presentation">
+          <div className="container">
+            <SectionIntro label={t.presentation.label} title={t.presentation.title} direction="left" />
+            <div className="presentation-layout">
+              <Reveal direction="left">
+                <InteractiveCard className="presentation-panel">
+                  <div className="presentation-copy">
+                    <p className="eyebrow">{t.presentation.scriptLabel}</p>
+                    <div className="concept-list">
+                      {t.presentation.concepts.map((concept, index) => (
+                        <div className="concept-item" key={concept.title}>
+                          <span>{String(index + 1).padStart(2, '0')}</span>
+                          <div>
+                            <h3>{concept.title}</h3>
+                            <p>{concept.body}</p>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </InteractiveCard>
+              </Reveal>
+              <Reveal className="presentation-visual" direction="right">
+                <div className="polygon-flow" aria-hidden="true">
+                  <div className="flow-dots flow-dots-raw">
+                    <span /><span /><span /><span /><span /><span />
+                  </div>
+                  <div className="flow-dots flow-dots-ready">
+                    <span /><span /><span /><span /><span /><span /><span /><span /><span />
+                  </div>
+
+                  <div className="poly-card poly-card-data">
+                    <span>Datos</span>
+                  </div>
+                  <div className="poly-card poly-card-engine">
+                    <span>Motor ETL</span>
+                  </div>
+                  <div className="poly-card poly-card-output">
+                    <span>Analisis</span>
+                  </div>
+
+                  <div className="flow-path flow-path-a" />
+                  <div className="flow-path flow-path-b" />
+                  <div className="flow-label flow-label-raw">Datos crudos</div>
+                  <div className="flow-label flow-label-clean">Base estructurada</div>
+                  <div className="flow-badge flow-badge-secure">Control local</div>
+                  <div className="flow-badge flow-badge-trace">Trazabilidad</div>
+                </div>
+                <StaggerContainer className="keyword-grid" direction="right">
+                  {t.presentation.keywords.map((keyword) => (
+                    <StaggerItem key={keyword}>
+                      <span className="keyword-chip">{keyword}</span>
+                    </StaggerItem>
+                  ))}
+                </StaggerContainer>
+              </Reveal>
+            </div>
           </div>
         </section>
 

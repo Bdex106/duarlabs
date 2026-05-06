@@ -2,6 +2,7 @@ export const copy = {
   es: {
     nav: {
       work: 'Proyectos',
+      presentation: 'Exposicion',
       capabilities: 'Capacidades',
       why: 'Por que DuarLabs',
       contact: 'Contacto',
@@ -36,6 +37,46 @@ export const copy = {
         '01 / Entender la restriccion operativa',
         '02 / Diseñar el limite correcto del sistema',
         '03 / Entregar una interfaz que el equipo pueda confiar',
+      ],
+    },
+    presentation: {
+      label: 'Enfoque de consultoria',
+      title: 'Datos complejos convertidos en inteligencia util.',
+      scriptLabel: 'Conceptos esenciales',
+      concepts: [
+        {
+          title: 'Consultoria en datos e inteligencia aplicada',
+          body: 'Transformamos informacion compleja en herramientas claras para la toma de decisiones.',
+        },
+        {
+          title: 'Orden sobre grandes volumenes de informacion',
+          body: 'Recibimos datos desordenados, los limpiamos, estandarizamos y estructuramos.',
+        },
+        {
+          title: 'ORDO DATA como motor del sistema',
+          body: 'Procesa la informacion y la convierte en una base preparada para analisis.',
+        },
+        {
+          title: 'Capas de analisis y visualizacion',
+          body: 'Desarrollamos interfaces para explorar patrones, relaciones, eventos e informes.',
+        },
+        {
+          title: 'Seguridad, trazabilidad y control',
+          body: 'Pensado para operar en entornos controlados y proteger informacion sensible.',
+        },
+      ],
+      keywordLabel: 'Palabras clave para la presentacion',
+      keywords: [
+        'Consultoria en datos',
+        'Inteligencia aplicada',
+        'Datos desordenados',
+        'Orden y claridad',
+        'Analisis accionable',
+        'ORDO DATA',
+        'Visualizacion analitica',
+        'Telecomunicaciones',
+        'Seguridad local',
+        'Trazabilidad',
       ],
     },
     labels: {
@@ -191,6 +232,7 @@ export const copy = {
   en: {
     nav: {
       work: 'Projects',
+      presentation: 'Pitch',
       capabilities: 'Capabilities',
       why: 'Why DuarLabs',
       contact: 'Contact',
@@ -225,6 +267,46 @@ export const copy = {
         '01 / Understand the operational constraint',
         '02 / Design the right system boundary',
         '03 / Deliver an interface the team can trust',
+      ],
+    },
+    presentation: {
+      label: 'Consulting focus',
+      title: 'Complex data turned into useful intelligence.',
+      scriptLabel: 'Essential concepts',
+      concepts: [
+        {
+          title: 'Data consulting and applied intelligence',
+          body: 'We turn complex information into clear tools for decision-making.',
+        },
+        {
+          title: 'Order over large volumes of information',
+          body: 'We receive messy data, clean it, standardize it, and structure it.',
+        },
+        {
+          title: 'ORDO DATA as the system engine',
+          body: 'It processes information and prepares it as an analysis-ready database.',
+        },
+        {
+          title: 'Analysis and visualization layers',
+          body: 'We build interfaces to explore patterns, relationships, events, and reports.',
+        },
+        {
+          title: 'Security, traceability, and control',
+          body: 'Designed for controlled environments and sensitive information workflows.',
+        },
+      ],
+      keywordLabel: 'Presentation keywords',
+      keywords: [
+        'Data consulting',
+        'Applied intelligence',
+        'Messy data',
+        'Order and clarity',
+        'Actionable analysis',
+        'ORDO DATA',
+        'Analytical visualization',
+        'Telecommunications',
+        'Local security',
+        'Traceability',
       ],
     },
     labels: {
