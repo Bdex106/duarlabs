@@ -196,6 +196,32 @@ export const copy = {
       needs: 'Necesidades del proyecto',
       submit: 'Enviar consulta',
     },
+    methodology: {
+      label: 'Metodologia',
+      title: 'De la restriccion operativa a la solucion tecnica.',
+      items: [
+        {
+          step: '01',
+          title: 'Diagnostico',
+          body: 'Analizamos el flujo actual y detectamos los cuellos de botella reales.'
+        },
+        {
+          step: '02',
+          title: 'Arquitectura',
+          body: 'Diseñamos la estructura de datos y el limite correcto del sistema.'
+        },
+        {
+          step: '03',
+          title: 'Desarrollo',
+          body: 'Construccion iterativa con entregas verificables y codigo limpio.'
+        },
+        {
+          step: '04',
+          title: 'Despliegue',
+          body: 'Integracion, capacitacion y monitoreo de la operacion en vivo.'
+        }
+      ]
+    },
     footer: {
       rights: 'Todos los derechos reservados.',
       home: 'Inicio',
@@ -425,6 +451,32 @@ export const copy = {
       email: 'Email',
       needs: 'Project needs',
       submit: 'Send inquiry',
+    },
+    methodology: {
+      label: 'Methodology',
+      title: 'From operational constraint to technical solution.',
+      items: [
+        {
+          step: '01',
+          title: 'Diagnostic',
+          body: 'We analyze the current flow and detect real bottlenecks.'
+        },
+        {
+          step: '02',
+          title: 'Architecture',
+          body: 'We design the data structure and the right system boundary.'
+        },
+        {
+          step: '03',
+          title: 'Development',
+          body: 'Iterative construction with verifiable deliveries and clean code.'
+        },
+        {
+          step: '04',
+          title: 'Deployment',
+          body: 'Integration, training, and monitoring of live operations.'
+        }
+      ]
     },
     footer: {
       rights: 'All rights reserved.',

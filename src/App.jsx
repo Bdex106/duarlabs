@@ -177,7 +177,7 @@ function ProgressBar() {
 
 /* ── Side Nav ── */
 function SideNav() {
-  const sections = ['home', 'about', 'technologies', 'capabilities', 'projects', 'why'];
+  const sections = ['home', 'about', 'technologies', 'capabilities', 'projects', 'why', 'methodology'];
   const [active, setActive] = useState('home');
 
   useEffect(() => {
@@ -235,6 +235,19 @@ function HomePage({ t, lang, setLang, onNavigate }) {
   const heroRef = useRef(null);
   const containerRef = useRef(null);
 
+  const { scrollYProgress: heroProgress } = useScroll({
+    target: heroRef,
+    offset: ['start start', 'end start'],
+  });
+  const smoothProgress = useSpring(heroProgress, { mass: 0.8, stiffness: 80, damping: 20 });
+  
+  const heroContentY = useTransform(smoothProgress, [0, 0.6], [0, -140]);
+  const heroContentOpacity = useTransform(smoothProgress, [0, 0.4], [1, 0]);
+  const archScale = useTransform(smoothProgress, [0, 0.6], [1, 1.18]);
+  const archOpacity = useTransform(smoothProgress, [0, 0.5], [1, 0]);
+  const archBlur = useTransform(smoothProgress, [0, 0.5], ['blur(0px)', 'blur(18px)']);
+  const gridOpacity = useTransform(smoothProgress, [0, 0.4], [0.22, 0]);
+
   useEffect(() => {
     const handleMouseMove = (e) => {
       if (!containerRef.current) return;
@@ -245,41 +258,27 @@ function HomePage({ t, lang, setLang, onNavigate }) {
     return () => window.removeEventListener('mousemove', handleMouseMove);
   }, []);
 
-  useEffect(() => {
-    const update = () => {
-      if (!heroRef.current) return;
-      const rect = heroRef.current.getBoundingClientRect();
-      const total = heroRef.current.offsetHeight - window.innerHeight;
-      const progress = total > 0 ? Math.min(1, Math.max(0, -rect.top / total)) : 0;
-      heroRef.current.style.setProperty('--hero-progress', String(progress));
-      heroRef.current.style.setProperty('--hero-content-opacity', String(1 - Math.min(progress * 2.5, 1)));
-      heroRef.current.style.setProperty('--hero-arch-opacity', String(1 - Math.min(progress * 2.8, 1)));
-      heroRef.current.style.setProperty('--hero-grid-opacity', String(0.22 * (1 - Math.min(progress * 3.3, 1))));
-    };
-    update();
-    window.addEventListener('scroll', update, { passive: true });
-    window.addEventListener('resize', update);
-    return () => {
-      window.removeEventListener('scroll', update);
-      window.removeEventListener('resize', update);
-    };
-  }, []);
-
   return (
     <>
       <Header t={t} lang={lang} setLang={setLang} onNavigate={onNavigate} />
       <ProgressBar />
+      <SideNav />
       <main>
         {/* ── Hero with Parallax Dissolve ── */}
         <section ref={heroRef} className="hero-parallax" id="home">
           <div className="hero-sticky">
             {/* Animated grid background */}
-            <div className="hero-grid-bg" />
+            <motion.div className="hero-grid-bg" style={{ opacity: gridOpacity }} />
 
             {/* Corporate architecture panel */}
-            <div
+            <motion.div
               className="hero-architecture"
               aria-hidden="true"
+              style={{
+                opacity: archOpacity,
+                filter: archBlur,
+                scale: archScale
+              }}
             >
               <div className="arch-panel arch-panel-main">
                 <span>{t.hero.arch.discovery}</span>
@@ -294,10 +293,13 @@ function HomePage({ t, lang, setLang, onNavigate }) {
               <div className="arch-node arch-node-a" />
               <div className="arch-node arch-node-b" />
               <div className="arch-node arch-node-c" />
-            </div>
+            </motion.div>
 
             {/* Content */}
-            <div className="hero-content">
+            <motion.div 
+              className="hero-content"
+              style={{ opacity: heroContentOpacity, y: heroContentY }}
+            >
               <p className="eyebrow">
                 {t.hero.eyebrow}
               </p>
@@ -324,7 +326,7 @@ function HomePage({ t, lang, setLang, onNavigate }) {
               </div>
 
               <ScrollIndicator />
-            </div>
+            </motion.div>
           </div>
         </section>
 
@@ -502,6 +504,24 @@ function HomePage({ t, lang, setLang, onNavigate }) {
           </div>
         </section>
 
+        {/* ── Methodology ── */}
+        <section className="content-band muted" id="methodology">
+          <div className="container">
+            <SectionIntro label={t.methodology.label} title={t.methodology.title} direction="up" />
+            <StaggerContainer className="methodology-grid" direction="up">
+              {t.methodology.items.map((item) => (
+                <StaggerItem key={item.step}>
+                  <div className="methodology-item">
+                    <span className="method-step">{item.step}</span>
+                    <h3>{item.title}</h3>
+                    <p>{item.body}</p>
+                  </div>
+                </StaggerItem>
+              ))}
+            </StaggerContainer>
+          </div>
+        </section>
+
         {/* ── Contact ── */}
         <section className="content-band contact-band" id="contact">
           <div className="container contact-grid">
@@ -571,10 +591,12 @@ function OrdoPage({ t, lang, setLang, onNavigate }) {
             <StaggerContainer className="ordo-pillars">
               {t.ordo.pillars.map(([title, body]) => (
                 <StaggerItem key={title}>
-                  <article>
-                    <h3>{title}</h3>
-                    <p>{body}</p>
-                  </article>
+                  <InteractiveCard className="ordo-pillar-card">
+                    <article>
+                      <h3>{title}</h3>
+                      <p>{body}</p>
+                    </article>
+                  </InteractiveCard>
                 </StaggerItem>
               ))}
             </StaggerContainer>
