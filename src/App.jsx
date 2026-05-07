@@ -1,12 +1,13 @@
-import React, { useEffect, useMemo, useState, useRef } from 'react';
-import { motion, useScroll, useSpring, useTransform } from 'framer-motion';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
+import { motion, useMotionTemplate, useScroll, useSpring, useTransform } from 'framer-motion';
 import { copy } from './content/translations.js';
 import ordoLogo from './assets/ordo/logo.png';
-import ordoDashboard from './assets/ordo/dashboard.png';
-import ordoNormalization from './assets/ordo/normalizacion.png';
-import ordoAi from './assets/ordo/ia-comparativa.png';
 
-/* ── Routing ── */
+const ordoDashboard = '/ordo-data/assets/dashboard-BhJb6xgr.png';
+const ordoNormalization = '/ordo-data/assets/normalizacion-CSn--oZg.png';
+const ordoAi = '/ordo-data/assets/normalizacion-CSn--oZg.png';
+
+/* Routing */
 function useRoute() {
   const [path, setPath] = useState(window.location.pathname);
 
@@ -17,7 +18,7 @@ function useRoute() {
   }, []);
 
   function navigate(href) {
-    if (href.startsWith('http') || href.startsWith('#')) return;
+    if (href.startsWith('http') || href.startsWith('#') || href.includes('#')) return;
     window.history.pushState({}, '', href);
     setPath(window.location.pathname);
     window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -26,18 +27,18 @@ function useRoute() {
   return { path, navigate };
 }
 
-/* ── Scroll-linked reveal with lateral convergence ── */
+/* Scroll reveal */
 function Reveal({ children, className = '', direction = 'up' }) {
   const ref = useRef(null);
   const { scrollYProgress } = useScroll({
     target: ref,
-    offset: ['start 0.95', 'start 0.6'],
+    offset: ['start 0.95', 'start 0.65'],
   });
   const smooth = useSpring(scrollYProgress, { mass: 0.6, stiffness: 100, damping: 24 });
-  
-  const xOffset = direction === 'left' ? -80 : direction === 'right' ? 80 : 0;
-  const yOffset = direction === 'up' ? 80 : 0;
-  
+
+  const xOffset = direction === 'left' ? -60 : direction === 'right' ? 60 : 0;
+  const yOffset = direction === 'up' ? 50 : 0;
+
   const x = useTransform(smooth, [0, 1], [xOffset, 0]);
   const y = useTransform(smooth, [0, 1], [yOffset, 0]);
   const opacity = useTransform(smooth, [0, 1], [0, 1]);
@@ -51,25 +52,24 @@ function Reveal({ children, className = '', direction = 'up' }) {
   );
 }
 
-/* ── Stagger container with spatial integration ── */
+/* Scroll-linked container */
 function StaggerContainer({ children, className = '', direction = 'right' }) {
   const ref = useRef(null);
   const { scrollYProgress } = useScroll({
     target: ref,
-    offset: ['start 0.95', 'start 0.5'],
+    offset: ['start 0.95', 'start 0.55'],
   });
   const smooth = useSpring(scrollYProgress, { mass: 0.8, stiffness: 80, damping: 22 });
-  
-  const xOffset = direction === 'left' ? -100 : direction === 'right' ? 100 : 0;
+
+  const xOffset = direction === 'left' ? -80 : direction === 'right' ? 80 : 0;
   const x = useTransform(smooth, [0, 1], [xOffset, 0]);
   const opacity = useTransform(smooth, [0, 1], [0, 1]);
-  const scale = useTransform(smooth, [0, 1], [0.9, 1]);
 
   return (
     <motion.div
       ref={ref}
       className={className}
-      style={{ opacity, x, scale, willChange: 'transform, opacity' }}
+      style={{ opacity, x, willChange: 'transform, opacity' }}
     >
       {children}
     </motion.div>
@@ -77,22 +77,20 @@ function StaggerContainer({ children, className = '', direction = 'right' }) {
 }
 
 function StaggerItem({ children, className = '' }) {
-  return (
-    <div className={className}>
-      {children}
-    </div>
-  );
+  return <div className={className}>{children}</div>;
 }
 
-/* ── Interactive Card ── */
+/* Interactive card */
 function InteractiveCard({ children, className = '' }) {
   const cardRef = useRef(null);
-  const handleMouseMove = (e) => {
+
+  function handleMouseMove(event) {
     if (!cardRef.current) return;
     const rect = cardRef.current.getBoundingClientRect();
-    cardRef.current.style.setProperty('--mx', `${e.clientX - rect.left}px`);
-    cardRef.current.style.setProperty('--my', `${e.clientY - rect.top}px`);
-  };
+    cardRef.current.style.setProperty('--mx', `${event.clientX - rect.left}px`);
+    cardRef.current.style.setProperty('--my', `${event.clientY - rect.top}px`);
+  }
+
   return (
     <div ref={cardRef} onMouseMove={handleMouseMove} className={className}>
       {children}
@@ -100,13 +98,14 @@ function InteractiveCard({ children, className = '' }) {
   );
 }
 
-/* ── SmartLink ── */
+/* SmartLink */
 function SmartLink({ href, onNavigate, children, className, ...props }) {
   const isExternal = href?.startsWith('http');
   const isStaticFile = href?.includes('/ordo-data/');
+  const isHashRoute = href?.includes('#');
 
   function handleClick(event) {
-    if (isExternal || isStaticFile) return; // let the browser handle it
+    if (isExternal || isStaticFile || isHashRoute) return;
     if (!href?.startsWith('/')) return;
     event.preventDefault();
     onNavigate(href);
@@ -121,7 +120,7 @@ function SmartLink({ href, onNavigate, children, className, ...props }) {
   );
 }
 
-/* ── Language Toggle ── */
+/* Language toggle */
 function LanguageToggle({ lang, setLang }) {
   return (
     <div className="language-toggle" aria-label="Language selector">
@@ -140,12 +139,12 @@ function LanguageToggle({ lang, setLang }) {
   );
 }
 
-/* ── Header ── */
+/* Header */
 function Header({ t, lang, setLang, onNavigate }) {
   const [scrolled, setScrolled] = useState(false);
 
   useEffect(() => {
-    const handler = () => setScrolled(window.scrollY > 40);
+    const handler = () => setScrolled(window.scrollY > 24);
     window.addEventListener('scroll', handler, { passive: true });
     return () => window.removeEventListener('scroll', handler);
   }, []);
@@ -157,60 +156,25 @@ function Header({ t, lang, setLang, onNavigate }) {
         <span>DuarLabs</span>
       </SmartLink>
       <nav className="desktop-nav" aria-label="Primary navigation">
-        <a href="/#projects">{t.nav.work}</a>
-        <a href="/#presentation">{t.nav.presentation}</a>
-        <a href="/#capabilities">{t.nav.capabilities}</a>
-        <a href="/#why">{t.nav.why}</a>
-        <a href="/#contact">{t.nav.contact}</a>
+        {t.nav.items.map((item) => (
+          <a key={item.label} href={item.href}>
+            <span>{item.label}</span>
+          </a>
+        ))}
       </nav>
       <LanguageToggle lang={lang} setLang={setLang} />
     </header>
   );
 }
 
-/* ── Progress Bar ── */
+/* Progress bar */
 function ProgressBar() {
   const { scrollYProgress } = useScroll();
-  const scaleX = useSpring(scrollYProgress, { stiffness: 100, damping: 30, restDelta: 0.001 });
+  const scaleX = useSpring(scrollYProgress, { stiffness: 110, damping: 30, restDelta: 0.001 });
   return <motion.div className="progress-bar" style={{ scaleX }} />;
 }
 
-/* ── Side Nav ── */
-function SideNav() {
-  const sections = ['home', 'about', 'technologies', 'capabilities', 'projects', 'why'];
-  const [active, setActive] = useState('home');
-
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) setActive(entry.target.id);
-        });
-      },
-      { threshold: 0.5 }
-    );
-    sections.forEach((id) => {
-      const el = document.getElementById(id);
-      if (el) observer.observe(el);
-    });
-    return () => observer.disconnect();
-  }, []);
-
-  return (
-    <div className="side-nav">
-      {sections.map((id) => (
-        <a
-          key={id}
-          href={`#${id}`}
-          className={`side-nav-dot ${active === id ? 'is-active' : ''}`}
-          aria-label={`Scroll to ${id}`}
-        />
-      ))}
-    </div>
-  );
-}
-
-/* ── Section Intro ── */
+/* Section intro */
 function SectionIntro({ label, title, body, direction = 'up' }) {
   return (
     <Reveal className="section-intro" direction={direction}>
@@ -221,29 +185,148 @@ function SectionIntro({ label, title, body, direction = 'up' }) {
   );
 }
 
-/* ── Scroll indicator ── */
 function ScrollIndicator() {
   return (
-    <div className="scroll-indicator">
+    <div className="scroll-indicator" aria-hidden="true">
       <div className="scroll-dot" />
     </div>
   );
 }
 
-/* ── HomePage ── */
+function MiniTrendChart({ values = [] }) {
+  const width = 170;
+  const height = 60;
+  const padding = 6;
+  const min = Math.min(...values);
+  const max = Math.max(...values);
+  const range = Math.max(max - min, 1);
+
+  const points = values
+    .map((value, index) => {
+      const x = padding + (index * (width - padding * 2)) / Math.max(values.length - 1, 1);
+      const y = height - padding - ((value - min) / range) * (height - padding * 2);
+      return `${x},${y}`;
+    })
+    .join(' ');
+
+  const areaPoints = `${padding},${height - padding} ${points} ${width - padding},${height - padding}`;
+  const yTicks = [0, 1, 2].map((tick) => {
+    const y = padding + (tick * (height - padding * 2)) / 2;
+    return Math.round(height - padding - ((y - padding) / (height - padding * 2)) * range + min);
+  });
+  const xLabels = ['Ja', 'Mar', 'May', 'Jul', 'Set', 'Nov', 'Dec'];
+
+  return (
+    <div className="metric-chart" aria-hidden="true">
+      <div className="metric-chart-scale">
+        {yTicks.map((tick) => (
+          <span key={tick}>{tick}</span>
+        ))}
+      </div>
+      <div className="metric-chart-plot">
+        <svg viewBox={`0 0 ${width} ${height}`} role="presentation">
+          <defs>
+            <linearGradient id="metric-area" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stopColor="rgba(255,255,255,0.42)" />
+              <stop offset="100%" stopColor="rgba(255,255,255,0.04)" />
+            </linearGradient>
+          </defs>
+          {[12, 28, 44].map((line) => (
+            <line
+              key={line}
+              x1={padding}
+              x2={width - padding}
+              y1={line}
+              y2={line}
+              className="metric-chart-gridline"
+            />
+          ))}
+          <polygon points={areaPoints} className="metric-chart-area" />
+          <polyline points={points} className="metric-chart-line" />
+        </svg>
+        <div className="metric-chart-labels">
+          {xLabels.map((label) => (
+            <span key={label}>{label}</span>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function SmallTrendChart({ values = [], tone = 'mint', compact = false }) {
+  if (!values.length) return null;
+
+  const width = 150;
+  const height = compact ? 30 : 40;
+  const padding = 5;
+  const min = Math.min(...values);
+  const max = Math.max(...values);
+  const range = Math.max(max - min, 1);
+
+  const chartPoints = values.map((value, index) => {
+    const x = padding + (index * (width - padding * 2)) / Math.max(values.length - 1, 1);
+    const y = height - padding - ((value - min) / range) * (height - padding * 2);
+    return { x, y };
+  });
+
+  const points = chartPoints
+    .map((value, index) => {
+      const point = chartPoints[index];
+      return `${point.x},${point.y}`;
+    })
+    .join(' ');
+
+  const areaPoints = `${padding},${height - padding} ${points} ${width - padding},${height - padding}`;
+  const lastPoint = chartPoints[chartPoints.length - 1];
+  const verticalGuides = Array.from({ length: 5 }, (_, index) => {
+    return padding + ((index + 1) * (width - padding * 2)) / 6;
+  });
+
+  return (
+    <div className={`mini-trend-chart mini-trend-chart-${tone} ${compact ? 'mini-trend-chart-compact' : ''}`} aria-hidden="true">
+      <svg viewBox={`0 0 ${width} ${height}`} role="presentation">
+        {verticalGuides.map((line) => (
+          <line
+            key={`x-${line}`}
+            x1={line}
+            x2={line}
+            y1={padding}
+            y2={height - padding}
+            className="mini-trend-gridline mini-trend-gridline-vertical"
+          />
+        ))}
+        {[10, 20, 30].map((line) => (
+          <line
+            key={`y-${line}`}
+            x1={padding}
+            x2={width - padding}
+            y1={line}
+            y2={line}
+            className="mini-trend-gridline"
+          />
+        ))}
+        <polygon points={areaPoints} className="mini-trend-area" />
+        <polyline points={points} className="mini-trend-line mini-trend-line-glow" />
+        <polyline points={points} className="mini-trend-line" />
+        <circle cx={lastPoint.x} cy={lastPoint.y} r="2.4" className="mini-trend-dot" />
+      </svg>
+    </div>
+  );
+}
+
+/* Home */
 function HomePage({ t, lang, setLang, onNavigate }) {
   const heroRef = useRef(null);
-  const containerRef = useRef(null);
-
-  useEffect(() => {
-    const handleMouseMove = (e) => {
-      if (!containerRef.current) return;
-      containerRef.current.style.setProperty('--x', `${e.clientX}px`);
-      containerRef.current.style.setProperty('--y', `${e.clientY}px`);
-    };
-    window.addEventListener('mousemove', handleMouseMove);
-    return () => window.removeEventListener('mousemove', handleMouseMove);
-  }, []);
+  const { scrollYProgress } = useScroll({
+    target: heroRef,
+    offset: ['start start', 'end end'],
+  });
+  const heroSmooth = useSpring(scrollYProgress, { mass: 0.7, stiffness: 90, damping: 24 });
+  const archOpacity = useTransform(heroSmooth, [0, 0.22, 0.42], [1, 1, 0]);
+  const archScale = useTransform(heroSmooth, [0, 1], [1, 1.18]);
+  const archBlurAmount = useTransform(heroSmooth, [0, 1], [0, 18]);
+  const archBlur = useMotionTemplate`blur(${archBlurAmount}px)`;
 
   useEffect(() => {
     const update = () => {
@@ -253,9 +336,9 @@ function HomePage({ t, lang, setLang, onNavigate }) {
       const progress = total > 0 ? Math.min(1, Math.max(0, -rect.top / total)) : 0;
       heroRef.current.style.setProperty('--hero-progress', String(progress));
       heroRef.current.style.setProperty('--hero-content-opacity', String(1 - Math.min(progress * 2.5, 1)));
-      heroRef.current.style.setProperty('--hero-arch-opacity', String(1 - Math.min(progress * 2.8, 1)));
       heroRef.current.style.setProperty('--hero-grid-opacity', String(0.22 * (1 - Math.min(progress * 3.3, 1))));
     };
+
     update();
     window.addEventListener('scroll', update, { passive: true });
     window.addEventListener('resize', update);
@@ -269,17 +352,15 @@ function HomePage({ t, lang, setLang, onNavigate }) {
     <>
       <Header t={t} lang={lang} setLang={setLang} onNavigate={onNavigate} />
       <ProgressBar />
-      <main>
-        {/* ── Hero with Parallax Dissolve ── */}
+      <main className="landing-page">
         <section ref={heroRef} className="hero-parallax" id="home">
           <div className="hero-sticky">
-            {/* Animated grid background */}
             <div className="hero-grid-bg" />
 
-            {/* Corporate architecture panel */}
-            <div
+            <motion.div
               className="hero-architecture"
               aria-hidden="true"
+              style={{ opacity: archOpacity, filter: archBlur, scale: archScale }}
             >
               <div className="arch-panel arch-panel-main">
                 <span>{t.hero.arch.discovery}</span>
@@ -294,75 +375,114 @@ function HomePage({ t, lang, setLang, onNavigate }) {
               <div className="arch-node arch-node-a" />
               <div className="arch-node arch-node-b" />
               <div className="arch-node arch-node-c" />
-            </div>
+            </motion.div>
 
-            {/* Content */}
             <div className="hero-content">
-              <p className="eyebrow">
-                {t.hero.eyebrow}
-              </p>
-
-              <h1>
-                {t.hero.title}
-              </h1>
-
-              <p className="hero-slogan">
-                {t.hero.slogan}
-              </p>
-
-              <p className="hero-body">
-                {t.hero.body}
-              </p>
-
+              <p className="eyebrow">{t.hero.eyebrow}</p>
+              <h1>{t.hero.title}</h1>
+              <p className="hero-slogan">{t.hero.slogan}</p>
+              <p className="hero-body">{t.hero.body}</p>
               <div className="hero-actions">
                 <a href="#projects" className="button button-primary">
                   {t.hero.primary}
                 </a>
-                <a href="#contact" className="button">
+                <a href="#contact" className="button button-secondary">
                   {t.hero.secondary}
                 </a>
               </div>
-
               <ScrollIndicator />
             </div>
           </div>
         </section>
 
-        {/* ── Metrics Console ── */}
-        <section className="content-band" id="about">
-          <div className="container">
-            <div className="metrics-row">
-              <SectionIntro label={t.about.label} title={t.about.title} body={t.about.body} direction="left" />
-              <StaggerContainer className="console-strip" direction="right">
-                {t.metrics.map(([title, body]) => (
-                  <StaggerItem key={title} className="metric-card">
-                    <span className="metric-label">{title}</span>
-                    <p>{body}</p>
+        <section className="content-band muted" id="about">
+          <div className="container about-stage">
+            <div className="about-stage-top">
+              <Reveal className="about-copy-panel" direction="left">
+                <p className="eyebrow">{t.about.label}</p>
+                <h2>{t.about.title}</h2>
+                <p>{t.about.body}</p>
+              </Reveal>
+              <StaggerContainer className="about-status-stack" direction="right">
+                {t.about.topCards.map((card) => (
+                  <StaggerItem key={card.title}>
+                    <InteractiveCard className="about-status-card">
+                      <div className="about-status-head">
+                        <span className="about-status-label">{card.label}</span>
+                        <div className="about-status-value">
+                          <strong>{card.value}</strong>
+                          <i />
+                        </div>
+                      </div>
+                      <div>
+                        <p>{card.body}</p>
+                      </div>
+                    </InteractiveCard>
                   </StaggerItem>
                 ))}
               </StaggerContainer>
             </div>
-
-            <Reveal delay={0.2}>
-              <div className="principles-list">
-                {t.about.principles.map((principle) => (
-                  <p key={principle}>{principle}</p>
+            <Reveal direction="up">
+              <div className="about-rail about-rail-lines">
+                {t.about.cards.map((card) => (
+                  <article key={card.label} className="about-rail-item">
+                    <p>
+                      <span>{card.label}</span>
+                      {card.title}
+                    </p>
+                  </article>
                 ))}
               </div>
             </Reveal>
           </div>
         </section>
 
-        {/* ── Presentation Section ── */}
-        <section className="content-band muted presentation-band" id="presentation">
-          <div className="container">
-            <SectionIntro label={t.presentation.label} title={t.presentation.title} direction="left" />
-            <div className="presentation-layout">
+        <section className="content-band presentation-band" id="presentation">
+          <div className="container presentation-stage">
+            <SectionIntro
+              label={t.presentation.label}
+              title={t.presentation.title}
+              body={t.presentation.body}
+              direction="left"
+            />
+            <Reveal className="diagram-shell" direction="up">
+              <div className="diagram-panel">
+                <div className="polygon-flow polygon-flow-large" aria-hidden="true">
+                  <div className="flow-dots flow-dots-left">
+                    <span /><span /><span /><span /><span /><span />
+                  </div>
+                  <div className="flow-dots flow-dots-right">
+                    <span /><span /><span /><span /><span /><span /><span /><span /><span />
+                  </div>
+                  <div className="diagram-arc" />
+
+                  {t.presentation.boardNodes.map((node) => (
+                    <div key={node.key} className={`diagram-node diagram-node-${node.key}`}>
+                      <div className="diagram-node-shape">
+                        <span>{node.label}</span>
+                      </div>
+                      {node.caption ? <small>{node.caption}</small> : null}
+                    </div>
+                  ))}
+
+                  <div className="diagram-link diagram-link-a" />
+                  <div className="diagram-link diagram-link-b" />
+                  <div className="diagram-link diagram-link-c" />
+                  <div className="diagram-link diagram-link-d" />
+
+                  <div className="diagram-badge diagram-badge-a">{t.presentation.boardBadges[0].label}</div>
+                  <div className="diagram-badge diagram-badge-b">{t.presentation.boardBadges[1].label}</div>
+                </div>
+
+              </div>
+            </Reveal>
+
+            <div className="presentation-support-grid">
               <Reveal direction="left">
-                <InteractiveCard className="presentation-panel">
+                <InteractiveCard className="presentation-panel presentation-panel-compact">
                   <div className="presentation-copy">
                     <p className="eyebrow">{t.presentation.scriptLabel}</p>
-                    <div className="concept-list">
+                    <div className="concept-list concept-list-compact">
                       {t.presentation.concepts.map((concept, index) => (
                         <div className="concept-item" key={concept.title}>
                           <span>{String(index + 1).padStart(2, '0')}</span>
@@ -376,33 +496,8 @@ function HomePage({ t, lang, setLang, onNavigate }) {
                   </div>
                 </InteractiveCard>
               </Reveal>
-              <Reveal className="presentation-visual" direction="right">
-                <div className="polygon-flow" aria-hidden="true">
-                  <div className="flow-dots flow-dots-raw">
-                    <span /><span /><span /><span /><span /><span />
-                  </div>
-                  <div className="flow-dots flow-dots-ready">
-                    <span /><span /><span /><span /><span /><span /><span /><span /><span />
-                  </div>
-
-                  <div className="poly-card poly-card-data">
-                    <span>Datos</span>
-                  </div>
-                  <div className="poly-card poly-card-engine">
-                    <span>Motor ETL</span>
-                  </div>
-                  <div className="poly-card poly-card-output">
-                    <span>Analisis</span>
-                  </div>
-
-                  <div className="flow-path flow-path-a" />
-                  <div className="flow-path flow-path-b" />
-                  <div className="flow-label flow-label-raw">Datos crudos</div>
-                  <div className="flow-label flow-label-clean">Base estructurada</div>
-                  <div className="flow-badge flow-badge-secure">Control local</div>
-                  <div className="flow-badge flow-badge-trace">Trazabilidad</div>
-                </div>
-                <StaggerContainer className="keyword-grid" direction="right">
+              <Reveal direction="right">
+                <StaggerContainer className="keyword-grid keyword-grid-panel" direction="right">
                   {t.presentation.keywords.map((keyword) => (
                     <StaggerItem key={keyword}>
                       <span className="keyword-chip">{keyword}</span>
@@ -414,50 +509,65 @@ function HomePage({ t, lang, setLang, onNavigate }) {
           </div>
         </section>
 
-        {/* ── Technologies ── */}
-        <section className="content-band muted" id="technologies">
+        <section className="content-band technology-band" id="technology">
           <div className="container">
-            <SectionIntro label={t.labels.technologies} title={t.techTitle} direction="left" />
-            <StaggerContainer className="tech-grid" direction="right">
-              {t.technologies.map((tech) => (
-                <StaggerItem key={tech}>
-                  <span className="tech-chip">{tech}</span>
-                </StaggerItem>
-              ))}
-            </StaggerContainer>
+            <div className="technology-stage">
+              <Reveal className="technology-copy" direction="up">
+                <p className="eyebrow">{t.labels.technology}</p>
+                <h2>{t.technologySection.title}</h2>
+              </Reveal>
+              <Reveal direction="up">
+                <div className="technology-chip-grid">
+                  {t.technologySection.chips.map((chip) => (
+                    <span key={chip} className="tech-chip">
+                      {chip}
+                    </span>
+                  ))}
+                </div>
+              </Reveal>
+            </div>
           </div>
         </section>
 
-        {/* ── Capabilities ── */}
         <section className="content-band" id="capabilities">
           <div className="container">
-            <SectionIntro label={t.labels.services} title={t.capabilitiesTitle} direction="left" />
-            <StaggerContainer className="card-grid" direction="right">
-              {t.capabilities.map((capability, i) => (
-                <StaggerItem key={capability.title}>
-                  <InteractiveCard className="premium-card">
-                    <div className="card-header">
-                      <p className="card-index">0{i + 1}</p>
-                      <div className="card-glow" />
-                    </div>
-                    <h3>{capability.title}</h3>
-                    <p>{capability.body}</p>
-                    <ul>
-                      {capability.items.map((item) => (
-                        <li key={item}>{item}</li>
-                      ))}
-                    </ul>
-                  </InteractiveCard>
-                </StaggerItem>
-              ))}
-            </StaggerContainer>
+            <SectionIntro
+              label={t.labels.services}
+              title={t.capabilitiesTitle}
+              direction="left"
+            />
+            <div className="capability-board">
+              <StaggerContainer className="card-grid capability-grid" direction="right">
+                {t.capabilities.map((capability, index) => (
+                  <StaggerItem key={capability.title}>
+                    <InteractiveCard className="premium-card premium-card-compact">
+                      <div className="card-header">
+                        <p className="card-index">0{index + 1}</p>
+                        <div className="card-glow" />
+                      </div>
+                      <h3>{capability.title}</h3>
+                      <p>{capability.body}</p>
+                      <ul>
+                        {capability.items.map((item) => (
+                          <li key={item}>{item}</li>
+                        ))}
+                      </ul>
+                    </InteractiveCard>
+                  </StaggerItem>
+                ))}
+              </StaggerContainer>
+            </div>
           </div>
         </section>
 
-        {/* ── Projects ── */}
         <section className="content-band muted" id="projects">
           <div className="container">
-            <SectionIntro label={t.projects.label} title={t.projects.title} body={t.projects.body} direction="left" />
+            <SectionIntro
+              label={t.projects.label}
+              title={t.projects.title}
+              body={t.projects.body}
+              direction="left"
+            />
             <StaggerContainer className="project-grid" direction="right">
               {t.projects.items.map((project, index) => (
                 <StaggerItem key={project.title}>
@@ -472,7 +582,9 @@ function HomePage({ t, lang, setLang, onNavigate }) {
                       {project.href ? (
                         <SmartLink href={project.href} onNavigate={onNavigate} className="text-link">
                           {t.projects.cta}
-                          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M7 17L17 7M17 7H7M17 7v10"/></svg>
+                          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                            <path d="M7 17L17 7M17 7H7M17 7v10" />
+                          </svg>
                         </SmartLink>
                       ) : (
                         <span className="text-link text-link-muted">{t.projects.internalCta}</span>
@@ -485,27 +597,43 @@ function HomePage({ t, lang, setLang, onNavigate }) {
           </div>
         </section>
 
-        {/* ── Why ── */}
-        <section className="content-band" id="why">
-          <div className="container split">
-            <SectionIntro label={t.why.label} title={t.why.title} direction="left" />
-            <StaggerContainer className="why-grid" direction="right">
-              {t.why.items.map((item, i) => (
-                <StaggerItem key={item}>
-                  <div className="why-item">
-                    <span className="why-index">0{i + 1}</span>
-                    <span className="why-text">{item}</span>
-                  </div>
-                </StaggerItem>
-              ))}
-            </StaggerContainer>
+        <section className="content-band performance-band" id="why">
+          <div className="container performance-stage">
+            <div className="performance-stage-copy">
+              <SectionIntro
+                label={t.performance.label}
+                title={t.performance.title}
+                body={t.performance.body}
+                direction="up"
+              />
+            </div>
+            <Reveal direction="up">
+              <div className="performance-panel performance-panel-centered">
+                <div className="performance-grid performance-grid-circles">
+                  {t.performance.items.map((item) => (
+                    <article key={item.value} className="performance-card">
+                      <div className={`performance-ring performance-ring-${item.value.replace(/[^a-zA-Z0-9]+/g, '').toLowerCase()}`}>
+                        <strong>{item.value}</strong>
+                      </div>
+                      <span>{item.label}</span>
+                      <p>{item.body}</p>
+                      <MiniTrendChart values={item.chart} />
+                    </article>
+                  ))}
+                </div>
+              </div>
+            </Reveal>
           </div>
         </section>
 
-        {/* ── Contact ── */}
         <section className="content-band contact-band" id="contact">
           <div className="container contact-grid">
-            <SectionIntro label={t.contact.label} title={t.contact.title} body={t.contact.body} direction="left" />
+            <SectionIntro
+              label={t.contact.label}
+              title={t.contact.title}
+              body={t.contact.body}
+              direction="left"
+            />
             <form className="contact-form" onSubmit={(event) => event.preventDefault()}>
               <label>
                 {t.contact.name}
@@ -535,7 +663,7 @@ function HomePage({ t, lang, setLang, onNavigate }) {
   );
 }
 
-/* ── OrdoPage ── */
+/* Ordo */
 function OrdoPage({ t, lang, setLang, onNavigate }) {
   return (
     <>
@@ -545,7 +673,7 @@ function OrdoPage({ t, lang, setLang, onNavigate }) {
           <div className="container ordo-hero-grid">
             <Reveal>
               <SmartLink href="/" onNavigate={onNavigate} className="back-link">
-                ← {t.ordo.back}
+                {t.ordo.back}
               </SmartLink>
               <p className="eyebrow">{t.ordo.label}</p>
               <img className="ordo-logo" src={ordoLogo} alt="Ordo Data" />
@@ -560,7 +688,7 @@ function OrdoPage({ t, lang, setLang, onNavigate }) {
                 </a>
               </div>
             </Reveal>
-            <Reveal delay={0.2} className="ordo-dashboard">
+            <Reveal className="ordo-dashboard" direction="right">
               <img src={ordoDashboard} alt="Minerva dashboard preview" />
             </Reveal>
           </div>
@@ -588,8 +716,8 @@ function OrdoPage({ t, lang, setLang, onNavigate }) {
               <img src={ordoAi} alt="Ordo AI comparison workflow" />
             </Reveal>
             <div className="ordo-sections">
-              {t.ordo.sections.map((section, i) => (
-                <Reveal key={section.title} delay={i * 0.1}>
+              {t.ordo.sections.map((section) => (
+                <Reveal key={section.title}>
                   <article>
                     <h2>{section.title}</h2>
                     <p>{section.body}</p>
@@ -605,7 +733,7 @@ function OrdoPage({ t, lang, setLang, onNavigate }) {
   );
 }
 
-/* ── Footer ── */
+/* Footer */
 function Footer({ t, lang, setLang, onNavigate }) {
   return (
     <footer className="site-footer">
@@ -614,14 +742,14 @@ function Footer({ t, lang, setLang, onNavigate }) {
           <span className="brand-mark">D</span>
           <span>DuarLabs</span>
         </SmartLink>
-        <p>© {new Date().getFullYear()} DuarLabs. {t.footer.rights}</p>
+        <p>{new Date().getFullYear()} DuarLabs. {t.footer.rights}</p>
         <LanguageToggle lang={lang} setLang={setLang} />
       </div>
     </footer>
   );
 }
 
-/* ── App Root ── */
+/* App root */
 export default function App() {
   const [lang, setLang] = useState(() => localStorage.getItem('duarlabs-lang') || 'es');
   const { path, navigate } = useRoute();
@@ -635,6 +763,10 @@ export default function App() {
   if (path === '/ordo-data') {
     window.location.replace('/ordo-data/index.html');
     return null;
+  }
+
+  if (path === '/ordo') {
+    return <OrdoPage t={t} lang={lang} setLang={setLang} onNavigate={navigate} />;
   }
 
   return <HomePage t={t} lang={lang} setLang={setLang} onNavigate={navigate} />;
