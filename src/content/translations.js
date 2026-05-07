@@ -211,6 +211,44 @@ export const copy = {
         body: 'Herramientas especializadas para entornos donde la estructura, la seguridad y la lectura analitica importan.',
       },
     ],
+    whySection: {
+      label: 'Por que elegirnos',
+      title: 'La diferencia esta en como se construye.',
+      items: [
+        'Ingenieria flexible',
+        'Soluciones para problemas reales',
+        'Arquitectura escalable',
+        'Ejecucion rapida',
+        'Entrega profesional',
+        'Mentalidad de seguridad',
+      ],
+    },
+    methodologySection: {
+      label: 'Metodologia',
+      title: 'De la restriccion operativa a la solucion tecnica.',
+      steps: [
+        {
+          label: '01',
+          title: 'Diagnostico',
+          body: 'Analizamos el flujo actual y detectamos los cuellos de botella reales.',
+        },
+        {
+          label: '02',
+          title: 'Arquitectura',
+          body: 'Disenamos la estructura de datos y el limite correcto del sistema.',
+        },
+        {
+          label: '03',
+          title: 'Desarrollo',
+          body: 'Construccion iterativa con entregas verificables y codigo limpio.',
+        },
+        {
+          label: '04',
+          title: 'Despliegue',
+          body: 'Integracion, capacitacion y monitoreo de la operacion en vivo.',
+        },
+      ],
+    },
     projects: {
       label: 'Proyectos',
       title: 'Trabajo visible, criterio verificable.',
@@ -541,6 +579,44 @@ export const copy = {
         body: 'Specialized tools for environments where structure, security, and analytical reading matter.',
       },
     ],
+    whySection: {
+      label: 'Why choose us',
+      title: 'The difference is in how it gets built.',
+      items: [
+        'Flexible engineering',
+        'Solutions for real problems',
+        'Scalable architecture',
+        'Fast execution',
+        'Professional delivery',
+        'Security mindset',
+      ],
+    },
+    methodologySection: {
+      label: 'Methodology',
+      title: 'From operational constraint to technical solution.',
+      steps: [
+        {
+          label: '01',
+          title: 'Discovery',
+          body: 'We analyze the current flow and identify the real bottlenecks.',
+        },
+        {
+          label: '02',
+          title: 'Architecture',
+          body: 'We design the data structure and the correct system boundary.',
+        },
+        {
+          label: '03',
+          title: 'Development',
+          body: 'Iterative delivery with verifiable milestones and clean code.',
+        },
+        {
+          label: '04',
+          title: 'Deployment',
+          body: 'Integration, training, and live operational monitoring.',
+        },
+      ],
+    },
     projects: {
       label: 'Projects',
       title: 'Visible work, verifiable judgment.',

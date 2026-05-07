@@ -560,6 +560,45 @@ function HomePage({ t, lang, setLang, onNavigate }) {
           </div>
         </section>
 
+        <section className="content-band" id="why">
+          <div className="container why-stage">
+            <Reveal className="why-copy" direction="left">
+              <p className="eyebrow">{t.whySection.label}</p>
+              <h2>{t.whySection.title}</h2>
+            </Reveal>
+            <StaggerContainer className="why-grid" direction="right">
+              {t.whySection.items.map((item, index) => (
+                <StaggerItem key={item}>
+                  <InteractiveCard className="why-card">
+                    <span>{String(index + 1).padStart(2, '0')}</span>
+                    <strong>{item}</strong>
+                  </InteractiveCard>
+                </StaggerItem>
+              ))}
+            </StaggerContainer>
+          </div>
+        </section>
+
+        <section className="content-band">
+          <div className="container method-stage">
+            <Reveal className="method-copy" direction="left">
+              <p className="eyebrow">{t.methodologySection.label}</p>
+              <h2>{t.methodologySection.title}</h2>
+            </Reveal>
+            <StaggerContainer className="method-grid" direction="right">
+              {t.methodologySection.steps.map((step) => (
+                <StaggerItem key={step.label + step.title}>
+                  <InteractiveCard className="method-card">
+                    <span className="method-index">{step.label}</span>
+                    <h3>{step.title}</h3>
+                    <p>{step.body}</p>
+                  </InteractiveCard>
+                </StaggerItem>
+              ))}
+            </StaggerContainer>
+          </div>
+        </section>
+
         <section className="content-band muted" id="projects">
           <div className="container">
             <SectionIntro
@@ -597,7 +636,7 @@ function HomePage({ t, lang, setLang, onNavigate }) {
           </div>
         </section>
 
-        <section className="content-band performance-band" id="why">
+        <section className="content-band performance-band" id="performance">
           <div className="container performance-stage">
             <div className="performance-stage-copy">
               <SectionIntro
