@@ -140,6 +140,38 @@ function LanguageToggle({ lang, setLang }) {
   );
 }
 
+/* ── AreaChart component for Hero ── */
+function AreaChart({ className, color = 'var(--success)' }) {
+  return (
+    <div className={`arch-chart-container ${className}`}>
+      <svg width="100%" height="100%" viewBox="0 0 100 40" preserveAspectRatio="none">
+        <defs>
+          <linearGradient id={`grad-${className}`} x1="0%" y1="0%" x2="0%" y2="100%">
+            <stop offset="0%" stopColor={color} stopOpacity="0.3" />
+            <stop offset="100%" stopColor={color} stopOpacity="0" />
+          </linearGradient>
+        </defs>
+        <motion.path
+          d="M0,40 Q10,10 20,25 T40,15 T60,30 T80,10 T100,25 L100,40 L0,40 Z"
+          fill={`url(#grad-${className})`}
+          initial={{ pathLength: 0, opacity: 0 }}
+          animate={{ pathLength: 1, opacity: 1 }}
+          transition={{ duration: 2, ease: "easeInOut" }}
+        />
+        <motion.path
+          d="M0,40 Q10,10 20,25 T40,15 T60,30 T80,10 T100,25"
+          fill="none"
+          stroke={color}
+          strokeWidth="0.5"
+          initial={{ pathLength: 0 }}
+          animate={{ pathLength: 1 }}
+          transition={{ duration: 2, ease: "easeInOut" }}
+        />
+      </svg>
+    </div>
+  );
+}
+
 /* ── Header ── */
 function Header({ t, lang, setLang, onNavigate }) {
   const [scrolled, setScrolled] = useState(false);
@@ -280,14 +312,42 @@ function HomePage({ t, lang, setLang, onNavigate }) {
                 scale: archScale
               }}
             >
-              <div className="arch-panel arch-panel-main">
-                <span>{t.hero.arch.discovery}</span>
+              <AreaChart className="chart-1" color="var(--success)" />
+              <AreaChart className="chart-2" color="var(--blueprint)" />
+              <AreaChart className="chart-3" color="#a855f7" />
+
+              <motion.div 
+                className="arch-panel arch-panel-main"
+                drag
+                dragConstraints={heroRef}
+                whileDrag={{ scale: 1.05, zIndex: 20 }}
+              >
+                <div className="arch-panel-header">
+                  <span>USUARIOS: 17k</span>
+                  <div className="arch-status-pill">
+                    <div className="arch-status-dot" />
+                    Pllen
+                  </div>
+                </div>
                 <strong>{t.hero.arch.systems}</strong>
-              </div>
-              <div className="arch-panel arch-panel-sub">
-                <span>{t.hero.arch.automation}</span>
+              </motion.div>
+
+              <motion.div 
+                className="arch-panel arch-panel-sub"
+                drag
+                dragConstraints={heroRef}
+                whileDrag={{ scale: 1.05, zIndex: 20 }}
+              >
+                <div className="arch-panel-header">
+                  <span>STATUS</span>
+                  <div className="arch-status-pill">
+                    <div className="arch-status-dot" />
+                    Open
+                  </div>
+                </div>
                 <strong>{t.hero.arch.data}</strong>
-              </div>
+              </motion.div>
+
               <div className="arch-line arch-line-a" />
               <div className="arch-line arch-line-b" />
               <div className="arch-node arch-node-a" />
