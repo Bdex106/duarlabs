@@ -57,8 +57,8 @@ export const copy = {
     },
     about: {
       label: 'Sobre DuarLabs',
-      title: 'Construimos software que sirve al proceso, no al ruido.',
-      body: 'Trabajamos con organizaciones que no pueden depender de herramientas improvisadas. Traducimos friccion operativa en interfaces claras, modulos controlables y sistemas que el equipo puede sostener.',
+      title: 'Ingenieria hecha para operaciones reales.',
+      body: 'DuarLabs desarrolla software a medida, herramientas de automatizacion, sistemas internos y plataformas especializadas que reducen friccion operativa, ordenan informacion critica y convierten procesos complejos en interfaces claras.',
       topCards: [
         {
           label: 'Procesamiento',

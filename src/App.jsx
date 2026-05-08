@@ -1,11 +1,89 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { motion, useMotionTemplate, useScroll, useSpring, useTransform } from 'framer-motion';
+import { Blocks, BrainCircuit, Building2, CalendarDays, ChevronRight, Cloud, Code2, Cpu, Database, Globe, Layers3, LayoutDashboard, Lock, Map, MonitorSmartphone, Puzzle, Rocket, ScanSearch, ServerCog, ShieldCheck, Sparkles, Star, Wrench, Workflow, Zap } from 'lucide-react';
+import { siCloudflare, siDocker, siDuckdb, siFastapi, siFlask, siNodedotjs, siOllama, siOpencv, siPandas, siPlotly, siPostgresql, siPython, siRailway, siReact, siSqlite, siStreamlit, siVite, siXyflow } from 'simple-icons';
 import { copy } from './content/translations.js';
 import ordoLogo from './assets/ordo/logo.png';
 
 const ordoDashboard = '/ordo-data/assets/dashboard-BhJb6xgr.png';
 const ordoNormalization = '/ordo-data/assets/normalizacion-CSn--oZg.png';
 const ordoAi = '/ordo-data/assets/normalizacion-CSn--oZg.png';
+
+const capabilityIcons = [
+  {
+    card: Building2,
+    items: [Globe, MonitorSmartphone, ShieldCheck],
+    tone: 'amber',
+  },
+  {
+    card: LayoutDashboard,
+    items: [LayoutDashboard, Lock, Zap],
+    tone: 'blue',
+  },
+  {
+    card: BrainCircuit,
+    items: [ScanSearch, Map, Workflow],
+    tone: 'violet',
+  },
+];
+
+const aboutStatusVisuals = [
+  { icon: Cpu, tone: 'teal' },
+  { icon: Layers3, tone: 'blue' },
+  { icon: ShieldCheck, tone: 'violet' },
+];
+
+const technologyGroups = [
+  { label: 'Frontend', icon: Code2, tone: 'blue', chips: ['React', 'Vite', 'React Flow', 'TipTap', 'FullCalendar'] },
+  { label: 'Backend', icon: ServerCog, tone: 'green', chips: ['Python', 'FastAPI', 'Flask', 'Streamlit', 'Node.js'] },
+  { label: 'Datos', icon: Database, tone: 'amber', chips: ['PostgreSQL', 'DuckDB', 'SQLite', 'Pandas', 'Plotly'] },
+  { label: 'IA & Vision', icon: BrainCircuit, tone: 'violet', chips: ['OpenCV', 'Ollama', 'IA / LLMs locales', 'Tesseract OCR'] },
+  { label: 'Infraestructura', icon: Cloud, tone: 'cyan', chips: ['Docker', 'Railway', 'Cloudflare R2'] },
+  { label: 'Herramientas', icon: Wrench, tone: 'paper', chips: ['APIs / Integraciones', 'Mapas / Geoespacial'] },
+];
+
+const whyCardVisuals = [
+  { icon: Blocks, tone: 'blue', progress: '12%' },
+  { icon: Puzzle, tone: 'blue', progress: '18%' },
+  { icon: Layers3, tone: 'cyan', progress: '34%' },
+  { icon: Zap, tone: 'cyan', progress: '16%' },
+  { icon: Star, tone: 'teal', progress: '11%' },
+  { icon: ShieldCheck, tone: 'teal', progress: '15%' },
+];
+
+const methodCardVisuals = [
+  { icon: ScanSearch, tone: 'blue', progress: '12%' },
+  { icon: Blocks, tone: 'blue', progress: '18%' },
+  { icon: Code2, tone: 'teal', progress: '16%' },
+  { icon: Rocket, tone: 'violet', progress: '14%' },
+];
+
+const technologyIconMap = {
+  React: { type: 'simple', icon: siReact },
+  Vite: { type: 'simple', icon: siVite },
+  'React Flow': { type: 'simple', icon: siXyflow },
+  TipTap: { type: 'fallback', icon: Blocks, color: '#8ee6ff' },
+  FullCalendar: { type: 'fallback', icon: CalendarDays, color: '#8ac4ff' },
+  Python: { type: 'simple', icon: siPython },
+  FastAPI: { type: 'simple', icon: siFastapi },
+  Flask: { type: 'simple', icon: siFlask },
+  Streamlit: { type: 'simple', icon: siStreamlit },
+  'Node.js': { type: 'simple', icon: siNodedotjs },
+  PostgreSQL: { type: 'simple', icon: siPostgresql },
+  DuckDB: { type: 'simple', icon: siDuckdb },
+  SQLite: { type: 'simple', icon: siSqlite },
+  Pandas: { type: 'simple', icon: siPandas },
+  Plotly: { type: 'simple', icon: siPlotly },
+  OpenCV: { type: 'simple', icon: siOpencv },
+  Ollama: { type: 'simple', icon: siOllama },
+  'IA / LLMs locales': { type: 'fallback', icon: BrainCircuit, color: '#a86bff' },
+  'Tesseract OCR': { type: 'fallback', icon: ScanSearch, color: '#66e7e5' },
+  Docker: { type: 'simple', icon: siDocker },
+  Railway: { type: 'simple', icon: siRailway },
+  'Cloudflare R2': { type: 'simple', icon: siCloudflare },
+  'APIs / Integraciones': { type: 'fallback', icon: Workflow, color: '#d0d6df' },
+  'Mapas / Geoespacial': { type: 'fallback', icon: Map, color: '#9bdd4a' },
+};
 
 /* Routing */
 function useRoute() {
@@ -78,6 +156,25 @@ function StaggerContainer({ children, className = '', direction = 'right' }) {
 
 function StaggerItem({ children, className = '' }) {
   return <div className={className}>{children}</div>;
+}
+
+function TechnologyChipIcon({ chip }) {
+  const entry = technologyIconMap[chip];
+
+  if (!entry) {
+    return <span className="tech-chip-glyph" aria-hidden="true">{chip.slice(0, 1)}</span>;
+  }
+
+  if (entry.type === 'simple') {
+    return (
+      <svg className="tech-chip-logo" viewBox="0 0 24 24" aria-hidden="true">
+        <path d={entry.icon.path} fill={`#${entry.icon.hex}`} />
+      </svg>
+    );
+  }
+
+  const Icon = entry.icon;
+  return <Icon className="tech-chip-fallback" size={14} strokeWidth={1.9} aria-hidden="true" style={{ color: entry.color }} />;
 }
 
 /* Interactive card */
@@ -404,9 +501,12 @@ function HomePage({ t, lang, setLang, onNavigate }) {
                 <p>{t.about.body}</p>
               </Reveal>
               <StaggerContainer className="about-status-stack" direction="right">
-                {t.about.topCards.map((card) => (
+                {t.about.topCards.map((card, index) => (
                   <StaggerItem key={card.title}>
-                    <InteractiveCard className="about-status-card">
+                    <InteractiveCard className={`about-status-card about-status-card-${aboutStatusVisuals[index]?.tone || 'teal'}`}>
+                      <div className="about-status-icon" aria-hidden="true">
+                        {React.createElement(aboutStatusVisuals[index]?.icon || Sparkles, { size: 28, strokeWidth: 1.9 })}
+                      </div>
                       <div className="about-status-head">
                         <span className="about-status-label">{card.label}</span>
                         <div className="about-status-value">
@@ -414,8 +514,15 @@ function HomePage({ t, lang, setLang, onNavigate }) {
                           <i />
                         </div>
                       </div>
-                      <div>
-                        <p>{card.body}</p>
+                      <p>{card.body}</p>
+                      <div className="about-status-foot" aria-hidden="true">
+                        <span className="about-status-progress" />
+                        <div className="about-status-dots">
+                          <span /><span /><span />
+                          <span /><span /><span />
+                          <span /><span /><span />
+                          <span /><span /><span />
+                        </div>
                       </div>
                     </InteractiveCard>
                   </StaggerItem>
@@ -479,7 +586,8 @@ function HomePage({ t, lang, setLang, onNavigate }) {
 
             <div className="presentation-support-grid">
               <Reveal direction="left">
-                <InteractiveCard className="presentation-panel presentation-panel-compact">
+                {/* Tarjeta de capacidad con color propio */}
+                <InteractiveCard className="presentation-panel presentation-panel-compact capability-card capability-card-blue">
                   <div className="presentation-copy">
                     <p className="eyebrow">{t.presentation.scriptLabel}</p>
                     <div className="concept-list concept-list-compact">
@@ -517,11 +625,28 @@ function HomePage({ t, lang, setLang, onNavigate }) {
                 <h2>{t.technologySection.title}</h2>
               </Reveal>
               <Reveal direction="up">
-                <div className="technology-chip-grid">
-                  {t.technologySection.chips.map((chip) => (
-                    <span key={chip} className="tech-chip">
-                      {chip}
-                    </span>
+                <div className="technology-table">
+                  {technologyGroups.map((group) => (
+                    <div key={group.label} className={`technology-row technology-row-${group.tone}`}>
+                      <div className="technology-label">
+                        <span className="technology-label-icon" aria-hidden="true">
+                          {React.createElement(group.icon, { size: 14, strokeWidth: 2 })}
+                        </span>
+                        <strong>{group.label}</strong>
+                      </div>
+                      <div className="technology-chip-grid technology-chip-grid-rows">
+                        {group.chips
+                          .filter((chip) => t.technologySection.chips.includes(chip))
+                          .map((chip) => (
+                            <span key={chip} className="tech-chip tech-chip-row">
+                              <span className="tech-chip-media" aria-hidden="true">
+                                <TechnologyChipIcon chip={chip} />
+                              </span>
+                              <span className="tech-chip-text">{chip}</span>
+                            </span>
+                          ))}
+                      </div>
+                    </div>
                   ))}
                 </div>
               </Reveal>
@@ -540,17 +665,30 @@ function HomePage({ t, lang, setLang, onNavigate }) {
               <StaggerContainer className="card-grid capability-grid" direction="right">
                 {t.capabilities.map((capability, index) => (
                   <StaggerItem key={capability.title}>
-                    <InteractiveCard className="premium-card premium-card-compact">
+                    <InteractiveCard className={`premium-card premium-card-compact capability-card capability-card-${capabilityIcons[index]?.tone || 'amber'}`}>
                       <div className="card-header">
+                        <div className="capability-topline" />
+                        <div className="capability-badge" aria-hidden="true">
+                          {React.createElement(capabilityIcons[index]?.card || Sparkles, { size: 16, strokeWidth: 1.8 })}
+                        </div>
                         <p className="card-index">0{index + 1}</p>
                         <div className="card-glow" />
                       </div>
                       <h3>{capability.title}</h3>
                       <p>{capability.body}</p>
                       <ul>
-                        {capability.items.map((item) => (
-                          <li key={item}>{item}</li>
-                        ))}
+                        {capability.items.map((item, itemIndex) => {
+                          const ItemIcon = capabilityIcons[index]?.items?.[itemIndex] || Sparkles;
+                          return (
+                            <li key={item}>
+                              <span className="capability-item-icon" aria-hidden="true">
+                                <ItemIcon size={14} strokeWidth={1.9} />
+                              </span>
+                              <span className="capability-item-text">{item}</span>
+                              <ChevronRight size={14} strokeWidth={1.9} className="capability-item-arrow" aria-hidden="true" />
+                            </li>
+                          );
+                        })}
                       </ul>
                     </InteractiveCard>
                   </StaggerItem>
@@ -569,9 +707,19 @@ function HomePage({ t, lang, setLang, onNavigate }) {
             <StaggerContainer className="why-grid" direction="right">
               {t.whySection.items.map((item, index) => (
                 <StaggerItem key={item}>
-                  <InteractiveCard className="why-card">
-                    <span>{String(index + 1).padStart(2, '0')}</span>
-                    <strong>{item}</strong>
+                  <InteractiveCard className={`why-card why-card-${whyCardVisuals[index]?.tone || 'blue'}`}>
+                    <div className="why-card-icon" aria-hidden="true">
+                      {React.createElement(whyCardVisuals[index]?.icon || Sparkles, { size: 21, strokeWidth: 1.8 })}
+                    </div>
+                    <div className="why-card-copy">
+                      <div className="why-card-head">
+                        <span>{String(index + 1).padStart(2, '0')}</span>
+                        <strong>{item}</strong>
+                      </div>
+                      <div className="why-card-meter" aria-hidden="true">
+                        <span style={{ width: whyCardVisuals[index]?.progress || '14%' }} />
+                      </div>
+                    </div>
                   </InteractiveCard>
                 </StaggerItem>
               ))}
@@ -586,12 +734,21 @@ function HomePage({ t, lang, setLang, onNavigate }) {
               <h2>{t.methodologySection.title}</h2>
             </Reveal>
             <StaggerContainer className="method-grid" direction="right">
-              {t.methodologySection.steps.map((step) => (
+              {t.methodologySection.steps.map((step, index) => (
                 <StaggerItem key={step.label + step.title}>
-                  <InteractiveCard className="method-card">
-                    <span className="method-index">{step.label}</span>
+                  <InteractiveCard className={`method-card method-card-${methodCardVisuals[index]?.tone || 'blue'}`}>
+                    <div className="method-card-top">
+                      <span className="method-index">{step.label}</span>
+                      <div className="method-card-icon" aria-hidden="true">
+                        {React.createElement(methodCardVisuals[index]?.icon || Sparkles, { size: 22, strokeWidth: 1.8 })}
+                      </div>
+                    </div>
                     <h3>{step.title}</h3>
+                    <span className="method-card-accent" aria-hidden="true" />
                     <p>{step.body}</p>
+                    <div className="method-card-meter" aria-hidden="true">
+                      <span style={{ width: methodCardVisuals[index]?.progress || '14%' }} />
+                    </div>
                   </InteractiveCard>
                 </StaggerItem>
               ))}
