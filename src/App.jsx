@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { motion, useMotionTemplate, useScroll, useSpring, useTransform } from 'framer-motion';
-import { Blocks, BrainCircuit, Building2, CalendarDays, ChevronRight, Cloud, Code2, Cpu, Database, Globe, Layers3, LayoutDashboard, Lock, Map, MonitorSmartphone, Puzzle, Rocket, ScanSearch, ServerCog, ShieldCheck, Sparkles, Star, Wrench, Workflow, Zap } from 'lucide-react';
+import { ArrowRight, Blocks, BrainCircuit, Building2, CalendarDays, ChevronRight, Cloud, Code2, Cpu, Database, FileSearch, Globe, GitBranch, Layers3, LayoutDashboard, Lock, Map, MonitorSmartphone, Puzzle, Rocket, ScanSearch, ServerCog, ShieldCheck, Sparkles, Star, Truck, Wrench, Workflow, Zap } from 'lucide-react';
 import { siCloudflare, siDocker, siDuckdb, siFastapi, siFlask, siNodedotjs, siOllama, siOpencv, siPandas, siPlotly, siPostgresql, siPython, siRailway, siReact, siSqlite, siStreamlit, siVite, siXyflow } from 'simple-icons';
 import { copy } from './content/translations.js';
 import ordoLogo from './assets/ordo/logo.png';
@@ -56,6 +56,15 @@ const methodCardVisuals = [
   { icon: Blocks, tone: 'blue', progress: '18%' },
   { icon: Code2, tone: 'teal', progress: '16%' },
   { icon: Rocket, tone: 'violet', progress: '14%' },
+];
+
+const projectCardVisuals = [
+  { icon: Truck, tone: 'teal' },
+  { icon: ShieldCheck, tone: 'blue' },
+  { icon: Database, tone: 'violet' },
+  { icon: FileSearch, tone: 'teal' },
+  { icon: Workflow, tone: 'blue' },
+  { icon: GitBranch, tone: 'violet' },
 ];
 
 const technologyIconMap = {
@@ -237,32 +246,44 @@ function LanguageToggle({ lang, setLang }) {
 }
 
 /* ── AreaChart component for Hero ── */
-function AreaChart({ className, color = 'var(--success)' }) {
+function HeroSceneChart({ className, color = '#b06cff' }) {
   return (
-    <div className={`arch-chart-container ${className}`}>
-      <svg width="100%" height="100%" viewBox="0 0 100 40" preserveAspectRatio="none">
+    <div className={className} aria-hidden="true">
+      <svg width="100%" height="100%" viewBox="0 0 240 120" preserveAspectRatio="none">
         <defs>
           <linearGradient id={`grad-${className}`} x1="0%" y1="0%" x2="0%" y2="100%">
-            <stop offset="0%" stopColor={color} stopOpacity="0.3" />
+            <stop offset="0%" stopColor={color} stopOpacity="0.28" />
             <stop offset="100%" stopColor={color} stopOpacity="0" />
           </linearGradient>
         </defs>
+        <g opacity="0.16" stroke={color} strokeWidth="0.5">
+          <path d="M0 24H240" />
+          <path d="M0 54H240" />
+          <path d="M0 84H240" />
+          <path d="M0 114H240" />
+          <path d="M40 0V120" />
+          <path d="M80 0V120" />
+          <path d="M120 0V120" />
+          <path d="M160 0V120" />
+          <path d="M200 0V120" />
+        </g>
         <motion.path
-          d="M0,40 Q10,10 20,25 T40,15 T60,30 T80,10 T100,25 L100,40 L0,40 Z"
+          d="M0,103 C16,103 18,103 30,90 C42,77 56,74 72,86 C85,96 97,98 110,82 C127,62 138,56 154,79 C168,98 180,102 196,84 C214,63 223,44 240,16 L240,120 L0,120 Z"
           fill={`url(#grad-${className})`}
           initial={{ pathLength: 0, opacity: 0 }}
           animate={{ pathLength: 1, opacity: 1 }}
-          transition={{ duration: 2, ease: "easeInOut" }}
+          transition={{ duration: 1.8, ease: 'easeInOut' }}
         />
         <motion.path
-          d="M0,40 Q10,10 20,25 T40,15 T60,30 T80,10 T100,25"
+          d="M0,103 C16,103 18,103 30,90 C42,77 56,74 72,86 C85,96 97,98 110,82 C127,62 138,56 154,79 C168,98 180,102 196,84 C214,63 223,44 240,16"
           fill="none"
           stroke={color}
-          strokeWidth="0.5"
+          strokeWidth="1.8"
           initial={{ pathLength: 0 }}
           animate={{ pathLength: 1 }}
-          transition={{ duration: 2, ease: "easeInOut" }}
+          transition={{ duration: 1.8, ease: 'easeInOut' }}
         />
+        <circle cx="240" cy="16" r="4.2" fill={color} />
       </svg>
     </div>
   );
@@ -529,47 +550,54 @@ function HomePage({ t, lang, setLang, onNavigate }) {
                 scale: archScale
               }}
             >
-              <AreaChart className="chart-1" color="var(--success)" />
-              <AreaChart className="chart-2" color="var(--blueprint)" />
-              <AreaChart className="chart-3" color="#a855f7" />
-
-              <motion.div 
-                className="arch-panel arch-panel-main"
-                drag
-                dragConstraints={heroRef}
-                whileDrag={{ scale: 1.05, zIndex: 20 }}
-              >
-                <div className="arch-panel-header">
-                  <span>USUARIOS: 17k</span>
-                  <div className="arch-status-pill">
-                    <div className="arch-status-dot" />
-                    Pllen
+              <div className="arch-panel arch-panel-main">
+                <div className="arch-card-icon">
+                  <Layers3 size={34} strokeWidth={1.8} />
+                </div>
+                <div className="arch-card-copy">
+                  <div className="arch-panel-header">
+                    <span>{t.hero.panels[0].tag}</span>
+                    <div className="arch-status-pill">
+                      <div className="arch-status-dot" />
+                      {t.hero.panels[0].status}
+                    </div>
+                  </div>
+                  <strong>{t.hero.arch.systems}</strong>
+                  <div className="arch-card-meter">
+                    <i />
                   </div>
                 </div>
-                <strong>{t.hero.arch.systems}</strong>
-              </motion.div>
+              </div>
 
-              <motion.div 
-                className="arch-panel arch-panel-sub"
-                drag
-                dragConstraints={heroRef}
-                whileDrag={{ scale: 1.05, zIndex: 20 }}
-              >
-                <div className="arch-panel-header">
-                  <span>STATUS</span>
-                  <div className="arch-status-pill">
-                    <div className="arch-status-dot" />
-                    Open
+              <div className="arch-connector">
+                <div className="arch-line arch-line-a" />
+                <div className="arch-line arch-line-b" />
+                <div className="arch-node arch-node-a" />
+                <div className="arch-node arch-node-b" />
+                <div className="arch-node arch-node-c" />
+                <div className="arch-node arch-node-d" />
+              </div>
+
+              <div className="arch-panel arch-panel-sub">
+                <div className="arch-card-icon">
+                  <Database size={30} strokeWidth={1.9} />
+                </div>
+                <div className="arch-card-copy">
+                  <div className="arch-panel-header">
+                    <span>{t.hero.panels[1].tag}</span>
+                    <div className="arch-status-pill">
+                      <div className="arch-status-dot" />
+                      {t.hero.panels[1].status}
+                    </div>
+                  </div>
+                  <strong>{t.hero.arch.data}</strong>
+                  <div className="arch-card-meter">
+                    <i />
                   </div>
                 </div>
-                <strong>{t.hero.arch.data}</strong>
-              </motion.div>
+              </div>
 
-              <div className="arch-line arch-line-a" />
-              <div className="arch-line arch-line-b" />
-              <div className="arch-node arch-node-a" />
-              <div className="arch-node arch-node-b" />
-              <div className="arch-node arch-node-c" />
+              <HeroSceneChart className="arch-chart-violet" color="#a855f7" />
             </motion.div>
 
             {/* Content */}
@@ -594,13 +622,13 @@ function HomePage({ t, lang, setLang, onNavigate }) {
               </p>
               <div className="hero-actions">
                 <a href="#projects" className="button button-primary">
-                  {t.hero.primary}
+                  <span>{t.hero.primary}</span>
+                  <ArrowRight size={18} strokeWidth={1.8} />
                 </a>
                 <a href="#contact" className="button button-secondary">
                   {t.hero.secondary}
                 </a>
               </div>
-              <ScrollIndicator />
             </motion.div>
           </div>
         </section>
@@ -880,24 +908,31 @@ function HomePage({ t, lang, setLang, onNavigate }) {
             <StaggerContainer className="project-grid" direction="right">
               {t.projects.items.map((project, index) => (
                 <StaggerItem key={project.title}>
-                  <InteractiveCard className="project-card">
-                    <div className={`project-visual project-visual-${index + 1}`}>
-                      <span>{project.tone}</span>
-                      <strong>{project.title}</strong>
-                    </div>
-                    <div className="project-body">
-                      <h3>{project.title}</h3>
-                      <p>{project.body}</p>
-                      {project.href ? (
-                        <SmartLink href={project.href} onNavigate={onNavigate} className="text-link">
-                          {t.projects.cta}
-                          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-                            <path d="M7 17L17 7M17 7H7M17 7v10" />
-                          </svg>
-                        </SmartLink>
-                      ) : (
-                        <span className="text-link text-link-muted">{t.projects.internalCta}</span>
-                      )}
+                  <InteractiveCard className={`project-card project-card-${projectCardVisuals[index]?.tone || 'blue'}`}>
+                    <div className="project-card-shell">
+                      <div className="project-card-head">
+                        <div className="project-card-icon" aria-hidden="true">
+                          {React.createElement(projectCardVisuals[index]?.icon || Building2, { size: 30, strokeWidth: 1.8 })}
+                        </div>
+                        <span className="project-card-meta">{project.tone}</span>
+                      </div>
+                      <div className="project-body">
+                        <h3 className="project-card-title">{project.title}</h3>
+                        <p className="project-card-copy">{project.body}</p>
+                      </div>
+                      <div className="project-card-footer">
+                        {project.href ? (
+                          <SmartLink href={project.href} onNavigate={onNavigate} className="text-link project-card-link">
+                            {t.projects.cta}
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                              <path d="M7 17L17 7M17 7H7M17 7v10" />
+                            </svg>
+                          </SmartLink>
+                        ) : (
+                          <span className="text-link project-card-link text-link-muted">{t.projects.internalCta}</span>
+                        )}
+                        <span className="project-card-link-line" aria-hidden="true" />
+                      </div>
                     </div>
                   </InteractiveCard>
                 </StaggerItem>
@@ -935,23 +970,50 @@ function HomePage({ t, lang, setLang, onNavigate }) {
           </div>
         </section>
 
-        {/* ── Methodology ── */}
-        <section className="content-band muted" id="methodology">
-          <div className="container">
-            <SectionIntro label={t.methodology.label} title={t.methodology.title} direction="up" />
-            <StaggerContainer className="methodology-grid" direction="up">
-              {t.methodology.items.map((item) => (
-                <StaggerItem key={item.step}>
-                  <div className="methodology-item">
-                    <span className="method-step">{item.step}</span>
-                    <h3>{item.title}</h3>
-                    <p>{item.body}</p>
-                  </div>
-                </StaggerItem>
-              ))}
-            </StaggerContainer>
-          </div>
-        </section>
+{/* ── Methodology ── */}
+<section className="content-band muted" id="methodology">
+  <div className="container method-stage">
+    <SectionIntro
+      label={t.methodology.label}
+      title={t.methodology.title}
+      direction="up"
+    />
+
+    <StaggerContainer className="method-grid" direction="up">
+      {t.methodology.items.map((item, index) => (
+        <StaggerItem key={item.step}>
+          <InteractiveCard className={`method-card method-card-${methodCardVisuals[index]?.tone || 'blue'}`}>
+            
+            {/* Parte superior: número + icono */}
+            <div className="method-card-top">
+              <span className="method-index">{item.step}</span>
+
+              <div className="method-card-icon" aria-hidden="true">
+                {React.createElement(methodCardVisuals[index]?.icon || Sparkles, {
+                  size: 22,
+                  strokeWidth: 1.8,
+                })}
+              </div>
+            </div>
+
+            {/* Texto de la tarjeta */}
+            <h3>{item.title}</h3>
+
+            {/* Línea pequeña debajo del título */}
+            <span className="method-card-accent" aria-hidden="true" />
+
+            <p>{item.body}</p>
+
+            {/* Línea inferior brillante */}
+            <div className="method-card-meter" aria-hidden="true">
+              <span style={{ width: methodCardVisuals[index]?.progress || '14%' }} />
+            </div>
+          </InteractiveCard>
+        </StaggerItem>
+      ))}
+    </StaggerContainer>
+  </div>
+</section>
 
         {/* ── Contact ── */}
         <section className="content-band contact-band" id="contact">
