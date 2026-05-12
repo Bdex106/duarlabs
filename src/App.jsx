@@ -38,31 +38,31 @@ const technologyGroups = [
   { label: 'Backend', icon: ServerCog, tone: 'green', chips: ['Python', 'FastAPI', 'Flask', 'Streamlit', 'Node.js'] },
   { label: 'Datos', icon: Database, tone: 'amber', chips: ['PostgreSQL', 'DuckDB', 'SQLite', 'Pandas', 'Plotly'] },
   { label: 'IA & Vision', icon: BrainCircuit, tone: 'violet', chips: ['OpenCV', 'Ollama', 'IA / LLMs locales', 'Tesseract OCR'] },
-  { label: 'Infraestructura', icon: Cloud, tone: 'cyan', chips: ['Docker', 'Railway', 'Cloudflare R2'] },
-  { label: 'Herramientas', icon: Wrench, tone: 'paper', chips: ['APIs / Integraciones', 'Mapas / Geoespacial'] },
+  { label: 'Infraestructura', icon: Cloud, tone: 'blue', chips: ['Docker', 'Railway', 'Cloudflare R2'] },
+  { label: 'Herramientas', icon: Wrench, tone: 'amber', chips: ['APIs / Integraciones', 'Mapas / Geoespacial'] },
 ];
 
 const whyCardVisuals = [
   { icon: Blocks, tone: 'blue', progress: '12%' },
   { icon: Puzzle, tone: 'blue', progress: '18%' },
-  { icon: Layers3, tone: 'cyan', progress: '34%' },
-  { icon: Zap, tone: 'cyan', progress: '16%' },
-  { icon: Star, tone: 'teal', progress: '11%' },
-  { icon: ShieldCheck, tone: 'teal', progress: '15%' },
+  { icon: Layers3, tone: 'teal', progress: '34%' },
+  { icon: Zap, tone: 'teal', progress: '16%' },
+  { icon: Star, tone: 'amber', progress: '11%' },
+  { icon: ShieldCheck, tone: 'amber', progress: '15%' },
 ];
 
 const methodCardVisuals = [
   { icon: ScanSearch, tone: 'blue', progress: '12%' },
-  { icon: Blocks, tone: 'blue', progress: '18%' },
+  { icon: Blocks, tone: 'amber', progress: '18%' },
   { icon: Code2, tone: 'teal', progress: '16%' },
   { icon: Rocket, tone: 'violet', progress: '14%' },
 ];
 
 const projectCardVisuals = [
-  { icon: Truck, tone: 'teal' },
+  { icon: Truck, tone: 'amber' },
   { icon: ShieldCheck, tone: 'blue' },
   { icon: Database, tone: 'violet' },
-  { icon: FileSearch, tone: 'teal' },
+  { icon: FileSearch, tone: 'amber' },
   { icon: Workflow, tone: 'blue' },
   { icon: GitBranch, tone: 'violet' },
 ];
@@ -609,7 +609,7 @@ function HomePage({ t, lang, setLang, onNavigate }) {
                 {t.hero.eyebrow}
               </p>
 
-              <h1>
+              <h1 className="hero-brand-title">
                 {t.hero.title}
               </h1>
 
@@ -702,7 +702,13 @@ function HomePage({ t, lang, setLang, onNavigate }) {
                   <div className="flow-dots flow-dots-right">
                     <span /><span /><span /><span /><span /><span /><span /><span /><span />
                   </div>
-                  <div className="diagram-arc" />
+
+                  <svg className="diagram-links-svg" viewBox="0 0 980 500" preserveAspectRatio="none">
+                    <path className="diagram-connection" d="M214 294 C 248 258, 292 208, 350 166" />
+                    <path className="diagram-connection" d="M384 174 C 392 232, 408 286, 474 322" />
+                    <path className="diagram-connection" d="M548 322 C 592 286, 634 224, 694 168" />
+                    <path className="diagram-connection" d="M734 170 C 744 228, 766 282, 818 320" />
+                  </svg>
 
                   {t.presentation.boardNodes.map((node) => (
                     <div key={node.key} className={`diagram-node diagram-node-${node.key}`}>
@@ -712,11 +718,6 @@ function HomePage({ t, lang, setLang, onNavigate }) {
                       {node.caption ? <small>{node.caption}</small> : null}
                     </div>
                   ))}
-
-                  <div className="diagram-link diagram-link-a" />
-                  <div className="diagram-link diagram-link-b" />
-                  <div className="diagram-link diagram-link-c" />
-                  <div className="diagram-link diagram-link-d" />
 
                   <div className="diagram-badge diagram-badge-a">{t.presentation.boardBadges[0].label}</div>
                   <div className="diagram-badge diagram-badge-b">{t.presentation.boardBadges[1].label}</div>
