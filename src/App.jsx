@@ -360,11 +360,11 @@ function SideNav() {
 }
 
 /* ── Section Intro ── */
-function SectionIntro({ label, title, body, direction = 'up' }) {
+function SectionIntro({ label, title, titleNode, body, direction = 'up' }) {
   return (
     <Reveal className="section-intro" direction={direction}>
       <p className="eyebrow">{label}</p>
-      <h2>{title}</h2>
+      <h2>{titleNode || title}</h2>
       {body && <p>{body}</p>}
     </Reveal>
   );
@@ -1019,32 +1019,121 @@ function HomePage({ t, lang, setLang, onNavigate }) {
         {/* ── Contact ── */}
         <section className="content-band contact-band" id="contact">
           <div className="container contact-grid">
-            <SectionIntro
-              label={t.contact.label}
-              title={t.contact.title}
-              body={t.contact.body}
-              direction="left"
-            />
+            <div className="contact-copy">
+              <SectionIntro
+                label={t.contact.label}
+                title={t.contact.title}
+                titleNode={
+                  lang === 'es' ? (
+                    <>
+                      Hablemos de
+                      <br />
+                      un sistema
+                      <br />
+                      que valga la
+                      <br />
+                      <span className="contact-title-accent">inversion.</span>
+                    </>
+                  ) : (
+                    <>
+                      Let us discuss
+                      <br />
+                      a system worth
+                      <br />
+                      the
+                      <br />
+                      <span className="contact-title-accent">investment.</span>
+                    </>
+                  )
+                }
+                body={t.contact.body}
+                direction="left"
+              />
+
+              {/* Tarjetas informativas del contacto */}
+              <div className="contact-benefits">
+                <div className="contact-benefit contact-benefit-cyan">
+                  <span aria-hidden="true">
+                    <MonitorSmartphone />
+                  </span>
+                  <div>
+                    <strong>Respuesta rápida</strong>
+                    <p>Te respondemos en menos de 24 horas hábiles.</p>
+                  </div>
+                </div>
+
+                <div className="contact-benefit contact-benefit-violet">
+                  <span aria-hidden="true">
+                    <ShieldCheck />
+                  </span>
+                  <div>
+                    <strong>Confidencialidad</strong>
+                    <p>Tu información está 100% protegida con nosotros.</p>
+                  </div>
+                </div>
+
+                <div className="contact-benefit contact-benefit-gold">
+                  <span aria-hidden="true">
+                    <CalendarDays />
+                  </span>
+                  <div>
+                    <strong>Reuniones estratégicas</strong>
+                    <p>Agendamos una llamada para entender tu caso a fondo.</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
             <form className="contact-form" onSubmit={(event) => event.preventDefault()}>
               <label>
                 {t.contact.name}
-                <input type="text" name="name" autoComplete="name" />
+                <input
+                  type="text"
+                  name="name"
+                  autoComplete="name"
+                  placeholder="Tu nombre completo"
+                />
               </label>
+
               <label>
                 {t.contact.company}
-                <input type="text" name="company" autoComplete="organization" />
+                <input
+                  type="text"
+                  name="company"
+                  autoComplete="organization"
+                  placeholder="Nombre de tu empresa"
+                />
               </label>
+
               <label>
                 {t.contact.email}
-                <input type="email" name="email" autoComplete="email" />
+                <input
+                  type="email"
+                  name="email"
+                  autoComplete="email"
+                  placeholder="tu@empresa.com"
+                />
               </label>
+
               <label>
                 {t.contact.needs}
-                <textarea name="needs" rows="5" />
+                <textarea
+                  name="needs"
+                  rows="5"
+                  placeholder="Cuéntanos brevemente tu necesidad o el reto que quieres resolver..."
+                />
               </label>
+
               <button type="submit" className="button button-primary">
                 {t.contact.submit}
+                <span className="contact-submit-arrow">→</span>
               </button>
+
+              {/* Nota de privacidad debajo del botón */}
+              <p className="contact-privacy">
+                <Lock aria-hidden="true" />
+                Tu información está protegida y no será compartida.
+              </p>
             </form>
           </div>
         </section>
