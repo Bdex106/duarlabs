@@ -1,10 +1,11 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { motion, useMotionTemplate, useScroll, useSpring, useTransform } from 'framer-motion';
-import { ArrowRight, BarChart3, Bell, Blocks, BrainCircuit, Building2, CalendarDays, ChevronRight, Cloud, Code2, Cpu, Database, FileSearch, Globe, GitBranch, Layers3, LayoutDashboard, Lock, Map, Monitor, MonitorSmartphone, Puzzle, Rocket, ScanSearch, ServerCog, ShieldCheck, Sparkles, Star, Target, Truck, Wrench, Workflow, Zap, Box } from 'lucide-react';
+import { ArrowRight, BarChart3, Bell, Blocks, BrainCircuit, Building2, CalendarDays, ChevronRight, Cloud, Code2, Cpu, Database, FileSearch, Folder, Globe, GitBranch, Layers3, LayoutDashboard, Lock, Mail, Map, Monitor, MonitorSmartphone, Puzzle, Rocket, Scale, ScanSearch, ServerCog, ShieldCheck, Sparkles, Star, Target, Truck, Wrench, Workflow, Zap, Box } from 'lucide-react';
 import { siCloudflare, siDocker, siDuckdb, siFastapi, siFlask, siNodedotjs, siOllama, siOpencv, siPandas, siPlotly, siPostgresql, siPython, siRailway, siReact, siSqlite, siStreamlit, siVite, siXyflow } from 'simple-icons';
 import { copy } from './content/translations.js';
 import ordoLogo from './assets/ordo/logo.png';
 import DuarLabsLogoReveal from './components/DuarLabsLogoReveal.jsx';
+import duarLabsMark from './img/logo.png';
 
 const ordoDashboard = '/ordo-data/assets/dashboard-BhJb6xgr.png';
 const ordoNormalization = '/ordo-data/assets/normalizacion-CSn--oZg.png';
@@ -58,6 +59,18 @@ const methodCardVisuals = [
   { icon: Code2, tone: 'teal', progress: '16%' },
   { icon: Rocket, tone: 'violet', progress: '14%' },
 ];
+
+const headerNavIcons = {
+  about: Building2,
+  presentation: BrainCircuit,
+  technology: Code2,
+  capabilities: Blocks,
+  projects: Folder,
+  why: Scale,
+  performance: BarChart3,
+  methodology: Layers3,
+  contact: Mail,
+};
 
 const projectCardVisuals = [
   { icon: Truck, tone: 'amber' },
@@ -318,6 +331,8 @@ function HeroSceneChart({ className, color = '#b06cff' }) {
 /* ── Header ── */
 function Header({ t, lang, setLang, onNavigate }) {
   const [scrolled, setScrolled] = useState(false);
+  const navTargets = t.nav.items.map((item) => item.href.split('#')[1]).filter(Boolean);
+  const [activeSection, setActiveSection] = useState(() => window.location.hash?.slice(1) || navTargets[0] || 'home');
 
   useEffect(() => {
     const handler = () => setScrolled(window.scrollY > 24);
@@ -325,18 +340,63 @@ function Header({ t, lang, setLang, onNavigate }) {
     return () => window.removeEventListener('scroll', handler);
   }, []);
 
+  useEffect(() => {
+    if (!navTargets.length) return undefined;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        const visible = entries
+          .filter((entry) => entry.isIntersecting)
+          .sort((a, b) => b.intersectionRatio - a.intersectionRatio);
+
+        if (visible[0]?.target?.id) {
+          setActiveSection(visible[0].target.id);
+        }
+      },
+      { threshold: [0.35, 0.55, 0.75] }
+    );
+
+    navTargets.forEach((id) => {
+      const section = document.getElementById(id);
+      if (section) observer.observe(section);
+    });
+
+    return () => observer.disconnect();
+  }, [navTargets]);
+
   return (
     <header className={`site-header ${scrolled ? 'is-scrolled' : ''}`}>
       <SmartLink href="/" onNavigate={onNavigate} className="brand" aria-label="DuarLabs home">
-        <span className="brand-mark">D</span>
-        <span>DuarLabs</span>
+        <span className="brand-mark">
+          <img src={duarLabsMark} alt="" className="brand-mark-image" aria-hidden="true" />
+        </span>
+        <span className="brand-copy">
+          <strong>DuarLabs</strong>
+          <small>{lang === 'es' ? 'Inteligencia operativa' : 'Operational intelligence'}</small>
+        </span>
       </SmartLink>
       <nav className="desktop-nav" aria-label="Primary navigation">
-        {t.nav.items.map((item) => (
-          <a key={item.label} href={item.href}>
-            <span>{item.label}</span>
-          </a>
-        ))}
+        {t.nav.items.map((item) => {
+          const sectionId = item.href.split('#')[1];
+          const Icon = headerNavIcons[sectionId] || Sparkles;
+          const isActive = activeSection === sectionId;
+
+          return (
+            <a
+              key={item.label}
+              href={item.href}
+              className={isActive ? 'is-active' : ''}
+              aria-current={isActive ? 'page' : undefined}
+              onClick={() => setActiveSection(sectionId)}
+              title={item.meta}
+            >
+              <span className="desktop-nav-icon" aria-hidden="true">
+                <Icon size={17} strokeWidth={1.75} />
+              </span>
+              <span className="desktop-nav-label">{item.label}</span>
+            </a>
+          );
+        })}
       </nav>
       <LanguageToggle lang={lang} setLang={setLang} />
     </header>
@@ -352,7 +412,7 @@ function ProgressBar() {
 
 /* ── Side Nav ── */
 function SideNav() {
-  const sections = ['home', 'about', 'technologies', 'capabilities', 'projects', 'why', 'methodology'];
+  const sections = ['home', 'about', 'presentation', 'technology', 'capabilities', 'projects', 'why', 'performance', 'methodology', 'contact'];
   const [active, setActive] = useState('home');
 
   useEffect(() => {
