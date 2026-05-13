@@ -394,6 +394,156 @@ img { display: block; max-width: 100%; }
     0 0 14px rgba(99,102,241,0.1);
 }
 
+.header-controls {
+  display: inline-flex;
+  align-items: center;
+  justify-self: end;
+  gap: 10px;
+  min-width: 0;
+}
+
+.mobile-nav-toggle,
+.mobile-nav-panel,
+.mobile-nav-backdrop {
+  display: none;
+}
+
+.mobile-nav-toggle {
+  align-items: center;
+  justify-content: center;
+  width: 46px;
+  height: 46px;
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 16px;
+  background:
+    linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.008)),
+    rgba(8, 13, 20, 0.84);
+  color: rgba(246,243,238,0.88);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.035),
+    0 18px 36px rgba(0,0,0,0.24);
+  transition: border-color 180ms ease, background 180ms ease, box-shadow 180ms ease, color 180ms ease;
+}
+
+.mobile-nav-toggle:hover,
+.mobile-nav-toggle.is-open {
+  border-color: rgba(129,140,248,0.22);
+  background:
+    linear-gradient(180deg, rgba(99,102,241,0.12), rgba(139,92,246,0.08)),
+    rgba(8, 13, 20, 0.9);
+  color: #f3eeff;
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.05),
+    0 18px 36px rgba(0,0,0,0.26),
+    0 0 18px rgba(99,102,241,0.08);
+}
+
+.mobile-nav-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 43;
+  background: rgba(4, 8, 14, 0.44);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 220ms ease;
+}
+
+.mobile-nav-backdrop.is-open {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.mobile-nav-panel {
+  position: fixed;
+  top: 86px;
+  left: 50%;
+  z-index: 44;
+  width: min(100% - 24px, 420px);
+  max-height: calc(100vh - 104px);
+  overflow-y: auto;
+  padding: 12px;
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 24px;
+  background:
+    linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.008)),
+    rgba(8, 13, 20, 0.92);
+  backdrop-filter: blur(22px);
+  -webkit-backdrop-filter: blur(22px);
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.04),
+    0 24px 64px rgba(0,0,0,0.34);
+  opacity: 0;
+  pointer-events: none;
+  transform: translate(-50%, -12px);
+  transition: opacity 220ms ease, transform 220ms ease;
+}
+
+.mobile-nav-panel.is-open {
+  opacity: 1;
+  pointer-events: auto;
+  transform: translate(-50%, 0);
+}
+
+.mobile-nav-panel a {
+  display: grid;
+  grid-template-columns: 22px minmax(0, 1fr);
+  align-items: center;
+  gap: 12px;
+  padding: 12px 14px;
+  border-radius: 16px;
+  color: rgba(246,243,238,0.9);
+  transition: background 180ms ease, box-shadow 180ms ease, color 180ms ease;
+}
+
+.mobile-nav-panel a + a {
+  margin-top: 6px;
+}
+
+.mobile-nav-panel a:hover,
+.mobile-nav-panel a.is-active {
+  background:
+    linear-gradient(180deg, rgba(99,102,241,0.11), rgba(139,92,246,0.06)),
+    rgba(255,255,255,0.014);
+  box-shadow: inset 0 0 0 1px rgba(129,140,248,0.12);
+  color: #f3eeff;
+}
+
+.mobile-nav-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: rgba(197,181,255,0.74);
+}
+
+.mobile-nav-panel a.is-active .mobile-nav-icon,
+.mobile-nav-panel a:hover .mobile-nav-icon {
+  color: rgba(211, 195, 255, 0.96);
+}
+
+.mobile-nav-copy {
+  display: grid;
+  gap: 2px;
+  min-width: 0;
+}
+
+.mobile-nav-copy strong {
+  font-size: 0.95rem;
+  font-weight: 740;
+  line-height: 1.2;
+}
+
+.mobile-nav-copy small {
+  color: rgba(190, 196, 255, 0.72);
+  font-family: var(--mono);
+  font-size: 0.62rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
 .progress-bar {
   position: fixed;
   top: 0;
@@ -7392,5 +7542,1561 @@ z
 
   .contact-grid .section-intro h2 {
     font-size: clamp(2.1rem, 12vw, 3.3rem);
+  }
+}
+
+/* =====================================================
+   RESPONSIVE GLOBAL CLEANUP
+   Cierra overflows y rigidez restante sin tocar desktop.
+===================================================== */
+
+@media (max-width: 1024px) {
+  .reveal-mask {
+    overflow: visible;
+  }
+
+  html,
+  body {
+    max-width: 100%;
+    overflow-x: hidden;
+  }
+
+  .landing-page,
+  .landing-page main,
+  .content-band,
+  .site-footer,
+  .hero-parallax,
+  .hero-sticky,
+  .hero-content,
+  .about-stage,
+  .presentation-stage,
+  .technology-stage,
+  .why-stage,
+  .method-stage,
+  .performance-stage,
+  .contact-band {
+    max-width: 100%;
+    overflow-x: clip;
+  }
+
+  .container,
+  .section-intro,
+  .about-copy-panel,
+  .about-status-stack,
+  .contact-copy,
+  .project-card-shell,
+  .project-body,
+  .why-card-copy,
+  .presentation-concept-copy,
+  .presentation-panel-titleblock,
+  .technology-label,
+  .method-card,
+  .performance-card,
+  .contact-form,
+  .footer-grid,
+  .arch-card-copy {
+    min-width: 0;
+    max-width: 100%;
+  }
+
+  h1,
+  h2,
+  h3,
+  p,
+  strong,
+  span,
+  small,
+  a,
+  button,
+  label {
+    overflow-wrap: anywhere;
+  }
+
+  .hero-sticky {
+    overflow-x: clip;
+  }
+
+  .hero-content {
+    width: 100%;
+  }
+
+  .duarlabs-logo-reveal {
+    width: min(100%, 900px);
+    min-width: 0;
+    min-height: clamp(118px, 16vw, 156px);
+  }
+
+  .duarlabs-logo-mask,
+  .duarlabs-logo-wordmark,
+  .duarlabs-logo-core,
+  .duarlabs-logo-layer {
+    max-width: 100%;
+    min-width: 0;
+  }
+
+  .duarlabs-logo-mask,
+  .duarlabs-logo-core,
+  .duarlabs-logo-layer {
+    justify-content: center;
+  }
+
+  .hero-architecture {
+    display: none;
+  }
+
+  .about-stage {
+    width: 100%;
+  }
+
+  .presentation-layout,
+  .presentation-support-grid,
+  .why-stage,
+  .contact-grid,
+  .ordo-hero-grid,
+  .ordo-detail-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .card-grid,
+  .project-grid,
+  .why-grid,
+  .method-grid,
+  .performance-grid,
+  .performance-grid-circles,
+  .ordo-pillars {
+    align-items: stretch;
+  }
+
+  .premium-card,
+  .project-card,
+  .project-card-shell,
+  .performance-panel,
+  .presentation-detail-card,
+  .contact-form,
+  .about-status-card,
+  .why-card,
+  .method-card {
+    max-width: 100%;
+    overflow: visible;
+  }
+
+  .project-visual,
+  .project-body,
+  .presentation-panel,
+  .contact-form,
+  .premium-card {
+    overflow: hidden;
+  }
+
+  .about-stage,
+  .about-status-card,
+  .about-status-stack,
+  .about-rail,
+  .about-rail-lines,
+  .about-rail-item,
+  .project-card,
+  .project-card-shell,
+  .why-card,
+  .method-card,
+  .performance-card,
+  .presentation-detail-card,
+  .contact-grid,
+  .contact-form,
+  .ordo-pillars article {
+    height: auto;
+    min-height: 0;
+  }
+
+  .performance-panel-centered,
+  .contact-form,
+  .about-stage,
+  .diagram-shell,
+  .reference-flow-panel {
+    max-width: 100%;
+  }
+
+  .diagram-shell,
+  .reference-flow-panel {
+    overscroll-behavior-x: contain;
+  }
+}
+
+@media (min-width: 768px) and (max-width: 1024px) {
+  .about-status-card {
+    grid-template-columns: 60px minmax(0, 1fr) auto;
+  }
+
+  .about-status-card p {
+    max-width: none;
+  }
+
+  .about-status-foot {
+    gap: 14px;
+  }
+
+  .about-status-progress {
+    width: 100%;
+    max-width: none;
+  }
+
+  .presentation-layout,
+  .presentation-support-grid,
+  .why-stage,
+  .contact-grid,
+  .ordo-hero-grid,
+  .ordo-detail-grid,
+  .about-stage-top {
+    grid-template-columns: 1fr;
+  }
+
+  .technology-stage {
+    gap: 24px;
+  }
+
+  .technology-row {
+    grid-template-columns: 1fr;
+  }
+
+  .card-grid,
+  .project-grid,
+  .why-grid,
+  .method-grid,
+  .performance-grid,
+  .performance-grid-circles,
+  .ordo-pillars {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .project-grid,
+  .card-grid {
+    gap: 16px;
+  }
+
+  .premium-card,
+  .project-body,
+  .contact-form,
+  .presentation-panel {
+    padding-inline: 20px;
+  }
+
+  .performance-ring {
+    width: clamp(118px, 14vw, 132px);
+    height: clamp(118px, 14vw, 132px);
+  }
+
+  .project-visual strong {
+    max-width: 100%;
+  }
+
+  .reference-flow-stage {
+    width: 1120px;
+    min-width: 1120px;
+    height: 446px;
+  }
+}
+
+@media (max-width: 767px) {
+  .reveal-mask {
+    overflow: visible;
+  }
+
+  .container {
+    width: min(100% - 20px, 1180px);
+  }
+
+  .content-band {
+    padding: 58px 0 42px;
+  }
+
+  .hero-parallax {
+    min-height: 720px;
+  }
+
+  .hero-content {
+    padding-inline: 2px;
+  }
+
+  .duarlabs-logo-reveal {
+    width: 100%;
+    min-width: 0;
+    min-height: 108px;
+  }
+
+  .duarlabs-logo-wordmark {
+    width: 100%;
+    text-align: center;
+  }
+
+  .hero-slogan,
+  .hero-body {
+    max-width: 100%;
+  }
+
+  .about-stage,
+  .premium-card,
+  .project-body,
+  .presentation-panel,
+  .contact-form,
+  .performance-panel {
+    padding-inline: 16px;
+  }
+
+  .about-status-stack,
+  .contact-benefits {
+    gap: 14px;
+  }
+
+  .about-status-card {
+    grid-template-columns: 52px minmax(0, 1fr);
+    grid-template-rows: auto auto auto auto;
+    column-gap: 14px;
+    row-gap: 10px;
+    padding: 16px 16px 14px;
+  }
+
+  .about-status-icon {
+    width: 48px;
+    height: 48px;
+    grid-row: 1 / span 2;
+  }
+
+  .about-status-head {
+    grid-column: 2;
+    grid-row: 1;
+    flex-wrap: wrap;
+    align-items: flex-start;
+    gap: 8px 12px;
+  }
+
+  .about-status-value {
+    min-width: 0;
+    justify-content: flex-start;
+  }
+
+  .about-status-card p {
+    grid-column: 1 / -1;
+    grid-row: 3;
+    max-width: none;
+    margin: 0;
+  }
+
+  .about-status-foot {
+    grid-column: 1 / -1;
+    grid-row: 4;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 10px;
+  }
+
+  .about-status-progress {
+    width: 100%;
+    max-width: none;
+  }
+
+  .about-status-dots {
+    justify-content: flex-start;
+    padding-right: 0;
+  }
+
+  .about-rail {
+    margin-top: 2px;
+  }
+
+  .about-rail-item {
+    padding: 16px 0;
+  }
+
+  .about-rail-item p {
+    font-size: 0.95rem;
+    line-height: 1.45;
+  }
+
+  .card-grid,
+  .project-grid,
+  .why-grid,
+  .method-grid,
+  .performance-grid,
+  .performance-grid-circles,
+  .ordo-pillars,
+  .about-stage-top,
+  .presentation-layout,
+  .presentation-support-grid,
+  .why-stage,
+  .contact-grid,
+  .ordo-hero-grid,
+  .ordo-detail-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .why-card,
+  .contact-benefit {
+    align-items: start;
+  }
+
+  .why-card-head,
+  .presentation-panel-head {
+    align-items: start;
+  }
+
+  .technology-row {
+    grid-template-columns: 1fr;
+  }
+
+  .technology-chip-grid,
+  .technology-chip-grid-rows,
+  .presentation-chip-grid {
+    width: 100%;
+    justify-content: flex-start;
+  }
+
+  .presentation-chip {
+    max-width: 100%;
+  }
+
+  .project-visual,
+  .project-body,
+  .performance-card,
+  .contact-form {
+    width: 100%;
+  }
+
+  .about-status-card,
+  .premium-card,
+  .project-card,
+  .project-card-shell,
+  .why-card,
+  .method-card,
+  .presentation-detail-card,
+  .performance-panel,
+  .contact-form {
+    overflow: visible;
+  }
+
+  .performance-panel {
+    padding-block: 20px 18px;
+  }
+
+  .performance-ring {
+    width: 112px;
+    height: 112px;
+  }
+
+  .reference-flow-stage {
+    width: 1020px;
+    min-width: 1020px;
+    height: 418px;
+  }
+
+  .contact-grid {
+    align-items: start;
+  }
+
+  .contact-copy,
+  .contact-form {
+    width: 100%;
+    max-width: 100%;
+  }
+
+  .contact-form .button {
+    width: 100%;
+  }
+}
+
+@media (max-width: 479px) {
+  .reveal-mask {
+    overflow: visible;
+  }
+
+  .container {
+    width: min(100% - 16px, 1180px);
+  }
+
+  .site-header {
+    width: min(100% - 12px, 1240px);
+  }
+
+  .hero-parallax {
+    min-height: 680px;
+  }
+
+  .duarlabs-logo-reveal {
+    min-height: 98px;
+  }
+
+  .about-stage,
+  .premium-card,
+  .project-body,
+  .presentation-panel,
+  .contact-form,
+  .performance-panel {
+    padding-inline: 14px;
+  }
+
+  .about-status-card {
+    padding-inline: 14px;
+  }
+
+  .reference-flow-stage {
+    width: 940px;
+    min-width: 940px;
+    height: 396px;
+  }
+}
+
+/* =====================================================
+   RESPONSIVE FINAL CLIPPING FIX
+   Libera altura/overflow residual en mobile y tablet
+   sin tocar desktop.
+===================================================== */
+
+@media (max-width: 1024px) {
+  .premium-card,
+  .capability-card,
+  .project-card,
+  .project-card-shell,
+  .project-visual,
+  .project-body,
+  .about-stage,
+  .about-stage-top,
+  .about-status-stack,
+  .about-status-card,
+  .about-rail,
+  .about-rail-lines,
+  .about-rail-item,
+  .presentation-stage,
+  .presentation-layout,
+  .presentation-support-grid,
+  .presentation-panel,
+  .presentation-detail-card,
+  .technology-stage,
+  .technology-table,
+  .why-stage,
+  .why-grid,
+  .why-card,
+  .method-stage,
+  .method-grid,
+  .method-card,
+  .performance-stage,
+  .performance-panel,
+  .performance-panel-centered,
+  .performance-grid,
+  .performance-grid-circles,
+  .performance-card,
+  .contact-band,
+  .contact-grid,
+  .contact-form,
+  .contact-benefit,
+  .card-grid,
+  .project-grid,
+  .capability-board {
+    height: auto;
+    min-height: 0;
+    overflow: visible;
+  }
+
+  .performance-band,
+  .contact-band,
+  .contact-grid {
+    min-height: auto;
+  }
+
+  .card-grid > *,
+  .project-grid > *,
+  .why-grid > *,
+  .method-grid > *,
+  .performance-grid > *,
+  .performance-grid-circles > * {
+    min-width: 0;
+    min-height: 0;
+  }
+
+  .about-stage-top,
+  .presentation-layout,
+  .presentation-support-grid,
+  .technology-row,
+  .why-stage,
+  .contact-grid {
+    align-items: start;
+  }
+
+  .about-status-card,
+  .project-card,
+  .project-card-shell,
+  .presentation-detail-card,
+  .why-card,
+  .method-card,
+  .performance-card,
+  .contact-benefit {
+    align-self: start;
+  }
+}
+
+@media (max-width: 767px) {
+  .hero-parallax {
+    height: auto;
+    min-height: 720px;
+  }
+
+  .hero-sticky {
+    height: auto;
+    min-height: 720px;
+    overflow: visible;
+  }
+
+  .performance-band,
+  .contact-band {
+    min-height: auto;
+    padding-top: 72px;
+    padding-bottom: 40px;
+  }
+
+  .contact-grid {
+    min-height: auto;
+    gap: 26px;
+  }
+
+  .performance-stage-copy {
+    margin-bottom: 32px;
+  }
+
+  .why-card-copy,
+  .method-card,
+  .performance-card,
+  .presentation-concept-copy,
+  .project-body,
+  .contact-form label,
+  .about-rail-item p {
+    min-width: 0;
+    max-width: 100%;
+  }
+}
+
+@media (max-width: 479px) {
+  .hero-parallax {
+    min-height: 650px;
+  }
+
+  .hero-sticky {
+    min-height: 650px;
+    padding-top: 11svh;
+  }
+
+  .performance-band,
+  .contact-band {
+    padding-top: 64px;
+    padding-bottom: 36px;
+  }
+}
+
+/* =====================================================
+   IA Y DATOS — ADAPTACIÓN RESPONSIVE ESPECÍFICA
+   Desktop se conserva.
+   Tablet compacta el flujo horizontal.
+   Mobile lo reorganiza en flujo vertical conectado.
+===================================================== */
+
+@media (min-width: 768px) and (max-width: 1024px) {
+  .diagram-shell,
+  .reference-flow-panel {
+    overflow: visible;
+    padding-bottom: 0;
+  }
+
+  .reference-flow-panel {
+    width: 100%;
+    max-width: 100%;
+  }
+
+  .reference-flow-stage {
+    width: 100%;
+    min-width: 0;
+    height: 416px;
+  }
+
+  .reference-flow-track {
+    left: 7%;
+    right: 7%;
+    top: 146px;
+    height: 132px;
+    border-radius: 26px;
+  }
+
+  .reference-flow-dots {
+    top: 201px;
+    grid-template-columns: repeat(2, 6px);
+    gap: 9px 10px;
+  }
+
+  .reference-flow-dots-left {
+    left: 2.8%;
+  }
+
+  .reference-flow-dots-right {
+    right: 2.8%;
+  }
+
+  .reference-flow-dots span {
+    width: 5px;
+    height: 5px;
+  }
+
+  .reference-flow-node {
+    top: 42px;
+    width: 192px;
+  }
+
+  .reference-flow-node-source {
+    left: 18%;
+  }
+
+  .reference-flow-node-process {
+    left: 39%;
+  }
+
+  .reference-flow-node-analysis {
+    left: 61%;
+  }
+
+  .reference-flow-node-reports {
+    left: 82%;
+  }
+
+  .reference-flow-diamond {
+    width: 132px;
+    height: 132px;
+    border-radius: 24px;
+  }
+
+  .reference-flow-diamond::before {
+    border-radius: 24px;
+  }
+
+  .reference-flow-diamond-inner {
+    gap: 10px;
+  }
+
+  .reference-flow-icon {
+    width: 34px;
+    height: 34px;
+  }
+
+  .reference-flow-diamond strong {
+    font-size: 1.08rem;
+  }
+
+  .reference-flow-connector {
+    top: 190px;
+    width: 44px;
+    height: 24px;
+  }
+
+  .reference-flow-connector-source {
+    left: 28%;
+  }
+
+  .reference-flow-connector-process {
+    left: 50%;
+  }
+
+  .reference-flow-connector-analysis {
+    left: 72%;
+  }
+
+  .reference-flow-meta {
+    margin-top: 4px;
+  }
+
+  .reference-flow-meta-line {
+    height: 22px;
+  }
+
+  .reference-flow-meta-orb {
+    width: 52px;
+    height: 52px;
+    margin-top: 7px;
+  }
+
+  .reference-flow-meta-copy strong {
+    font-size: 0.86rem;
+  }
+
+  .reference-flow-meta-copy small {
+    font-size: 0.64rem;
+  }
+}
+
+@media (max-width: 767px) {
+  .diagram-shell,
+  .reference-flow-panel {
+    overflow: visible;
+    padding-bottom: 0;
+  }
+
+  .reference-flow-panel {
+    width: 100%;
+    max-width: 100%;
+  }
+
+  .reference-flow-stage {
+    position: relative;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: auto 68px auto 68px auto 68px auto;
+    justify-items: center;
+    align-items: start;
+    width: 100%;
+    min-width: 0;
+    height: auto;
+    padding: 8px 0 18px;
+    overflow: visible;
+  }
+
+  .reference-flow-track {
+    left: 50%;
+    right: auto;
+    top: 88px;
+    bottom: 132px;
+    width: min(44vw, 156px);
+    height: auto;
+    transform: translateX(-50%);
+    border-radius: 28px;
+    background:
+      linear-gradient(180deg, rgba(98,234,255,0.05), rgba(171,117,255,0.08)),
+      rgba(255,255,255,0.01);
+    box-shadow:
+      inset 0 0 0 1px rgba(255,255,255,0.04),
+      0 0 36px rgba(124, 77, 255, 0.08);
+    opacity: 0.95;
+  }
+
+  .reference-flow-dots {
+    top: 50%;
+    transform: translateY(-50%);
+    grid-template-columns: repeat(2, 5px);
+    gap: 8px 9px;
+  }
+
+  .reference-flow-dots-left {
+    left: 4px;
+  }
+
+  .reference-flow-dots-right {
+    right: 4px;
+  }
+
+  .reference-flow-dots span {
+    width: 5px;
+    height: 5px;
+  }
+
+  .reference-flow-node {
+    position: relative;
+    top: auto;
+    left: auto;
+    z-index: 2;
+    width: min(100%, 286px);
+    transform: none;
+  }
+
+  .reference-flow-node-source {
+    grid-row: 1;
+  }
+
+  .reference-flow-node-process {
+    grid-row: 3;
+  }
+
+  .reference-flow-node-analysis {
+    grid-row: 5;
+  }
+
+  .reference-flow-node-reports {
+    grid-row: 7;
+  }
+
+  .reference-flow-diamond {
+    width: 132px;
+    height: 132px;
+    margin-inline: auto;
+    border-radius: 24px;
+  }
+
+  .reference-flow-diamond::before {
+    border-radius: 24px;
+  }
+
+  .reference-flow-diamond-inner {
+    gap: 10px;
+  }
+
+  .reference-flow-icon {
+    width: 34px;
+    height: 34px;
+  }
+
+  .reference-flow-diamond strong {
+    font-size: 1.04rem;
+  }
+
+  .reference-flow-connector {
+    position: relative;
+    top: auto;
+    left: auto;
+    z-index: 1;
+    width: 28px;
+    height: 68px;
+    justify-self: center;
+    align-self: center;
+  }
+
+  .reference-flow-connector-source {
+    grid-row: 2;
+  }
+
+  .reference-flow-connector-process {
+    grid-row: 4;
+  }
+
+  .reference-flow-connector-analysis {
+    grid-row: 6;
+  }
+
+  .reference-flow-connector span {
+    left: 50%;
+    right: auto;
+    top: 0;
+    width: 2.5px;
+    height: 100%;
+    transform: translateX(-50%);
+  }
+
+  .reference-flow-connector span::after {
+    right: auto;
+    left: 50%;
+    top: auto;
+    bottom: -1px;
+    transform: translateX(-50%) rotate(135deg);
+  }
+
+  .reference-flow-meta {
+    margin-top: 8px;
+  }
+
+  .reference-flow-meta-line {
+    height: 20px;
+  }
+
+  .reference-flow-meta-orb {
+    width: 50px;
+    height: 50px;
+    margin-top: 6px;
+  }
+
+  .reference-flow-meta-copy {
+    margin-top: 8px;
+    gap: 3px;
+  }
+
+  .reference-flow-meta-copy strong {
+    font-size: 0.84rem;
+  }
+
+  .reference-flow-meta-copy small {
+    font-size: 0.63rem;
+  }
+}
+
+@media (max-width: 479px) {
+  .reference-flow-stage {
+    grid-template-rows: auto 62px auto 62px auto 62px auto;
+    padding-bottom: 14px;
+  }
+
+  .reference-flow-track {
+    width: min(46vw, 146px);
+    top: 84px;
+    bottom: 126px;
+  }
+
+  .reference-flow-node {
+    width: min(100%, 264px);
+  }
+
+  .reference-flow-diamond {
+    width: 122px;
+    height: 122px;
+    border-radius: 22px;
+  }
+
+  .reference-flow-diamond::before {
+    border-radius: 22px;
+  }
+
+  .reference-flow-diamond strong {
+    font-size: 0.96rem;
+  }
+
+  .reference-flow-icon {
+    width: 30px;
+    height: 30px;
+  }
+
+  .reference-flow-meta-orb {
+    width: 46px;
+    height: 46px;
+  }
+}
+
+/* =====================================================
+   HERO ARCHITECTURE — RESPONSIVE VISUAL ADAPTATION
+   Mantiene visibles Sistemas / Datos / conectores / chart
+   en tablet y mobile sin tocar el desktop.
+===================================================== */
+
+@media (min-width: 768px) and (max-width: 1024px) {
+  .hero-parallax {
+    height: auto;
+    min-height: 920px;
+  }
+
+  .hero-sticky {
+    height: auto;
+    min-height: 920px;
+    overflow: visible;
+    padding-bottom: 40px;
+  }
+
+  .hero-content {
+    order: 1;
+  }
+
+  .hero-architecture {
+    display: grid;
+    order: 2;
+    position: relative;
+    left: auto;
+    bottom: auto;
+    translate: none;
+    width: min(100%, 760px);
+    height: 236px;
+    margin: 30px auto 0;
+    transform-origin: center;
+    z-index: 1;
+  }
+
+  .arch-panel {
+    min-height: 96px;
+    padding: 14px 16px 12px;
+    grid-template-columns: 50px 1fr;
+    gap: 14px;
+  }
+
+  .arch-card-icon {
+    width: 42px;
+    height: 42px;
+  }
+
+  .arch-panel strong {
+    font-size: 1.08rem;
+    margin-bottom: 8px;
+  }
+
+  .arch-panel span,
+  .arch-status-pill {
+    font-size: 0.62rem;
+  }
+
+  .arch-panel-main {
+    left: 6px;
+    top: 8px;
+    width: min(100%, 280px);
+  }
+
+  .arch-panel-sub {
+    right: 34px;
+    top: 62px;
+    width: min(100%, 274px);
+  }
+
+  .arch-line-a {
+    left: 286px;
+    top: 80px;
+    width: 72px;
+  }
+
+  .arch-line-b {
+    left: 358px;
+    top: 129px;
+    width: 64px;
+  }
+
+  .arch-node-a { left: 278px; top: 72px; }
+  .arch-node-b { left: 350px; top: 72px; }
+  .arch-node-c { left: 350px; top: 121px; }
+  .arch-node-d { left: 414px; top: 121px; }
+
+  .arch-chart-violet {
+    right: 44px;
+    bottom: 16px;
+    width: 176px;
+    height: 58px;
+  }
+}
+
+@media (max-width: 767px) {
+  .hero-content {
+    order: 1;
+  }
+
+  .hero-architecture {
+    display: grid;
+    order: 2;
+    position: relative;
+    left: auto;
+    bottom: auto;
+    translate: none;
+    width: min(100%, 360px);
+    height: auto;
+    margin: 24px auto 0;
+    padding-bottom: 72px;
+    z-index: 1;
+  }
+
+  .arch-panel {
+    position: relative;
+    min-height: 92px;
+    padding: 14px 14px 12px;
+    grid-template-columns: 46px 1fr;
+    gap: 12px;
+  }
+
+  .arch-card-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 12px;
+  }
+
+  .arch-panel strong {
+    font-size: 1rem;
+    margin-bottom: 8px;
+  }
+
+  .arch-panel span,
+  .arch-status-pill {
+    font-size: 0.6rem;
+  }
+
+  .arch-panel-main {
+    position: relative;
+    left: auto;
+    top: auto;
+    width: calc(100% - 26px);
+    justify-self: start;
+  }
+
+  .arch-panel-sub {
+    position: relative;
+    right: auto;
+    top: auto;
+    width: calc(100% - 26px);
+    justify-self: end;
+    margin-top: 102px;
+  }
+
+  .arch-connector {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 94px;
+    height: 122px;
+    inset: auto 0 auto 0;
+    z-index: 2;
+  }
+
+  .arch-line {
+    background: rgba(53,236,224,0.68);
+    box-shadow: 0 0 12px rgba(53,236,224,0.2);
+  }
+
+  .arch-line-a {
+    left: 50%;
+    top: 4px;
+    width: 2px;
+    height: 54px;
+    transform: translateX(-50%);
+  }
+
+  .arch-line-b {
+    left: 50%;
+    top: 58px;
+    width: 74px;
+    height: 2px;
+    rotate: 0deg;
+  }
+
+  .arch-node {
+    width: 14px;
+    height: 14px;
+  }
+
+  .arch-node-a { left: calc(50% - 7px); top: -2px; }
+  .arch-node-b { left: calc(50% - 7px); top: 48px; }
+  .arch-node-c { left: calc(50% - 7px); top: 50px; }
+  .arch-node-d { left: calc(50% + 62px); top: 50px; }
+
+  .arch-chart-violet {
+    position: absolute;
+    right: 14px;
+    bottom: 0;
+    width: 168px;
+    height: 56px;
+    z-index: 1;
+  }
+}
+
+@media (max-width: 479px) {
+  .hero-architecture {
+    width: min(100%, 332px);
+    margin-top: 22px;
+    padding-bottom: 66px;
+  }
+
+  .arch-panel {
+    padding: 13px 13px 11px;
+  }
+
+  .arch-panel-main,
+  .arch-panel-sub {
+    width: calc(100% - 18px);
+  }
+
+  .arch-panel-sub {
+    margin-top: 96px;
+  }
+
+  .arch-connector {
+    top: 90px;
+    height: 114px;
+  }
+
+  .arch-line-b {
+    width: 66px;
+  }
+
+  .arch-node-d { left: calc(50% + 54px); }
+
+  .arch-chart-violet {
+    width: 150px;
+    height: 52px;
+    right: 10px;
+  }
+}
+
+/* =====================================================
+   HEADER / NAV RESPONSIVE FINAL
+   Desktop intacto.
+   Tablet compacto real.
+   Mobile con menú hamburguesa + panel premium.
+===================================================== */
+
+@media (min-width: 768px) and (max-width: 1199px) {
+  .site-header {
+    width: min(100% - 28px, 1180px);
+    gap: 14px;
+    padding: 8px 0;
+  }
+
+  .site-header::before {
+    width: min(1500px, calc(100vw - 20px));
+    height: 148px;
+    top: -28px;
+  }
+
+  .site-header::after {
+    width: min(980px, calc(100vw - 240px));
+  }
+
+  .brand {
+    gap: 10px;
+    padding: 8px 4px 8px 0;
+  }
+
+  .brand::before {
+    left: -20px;
+    width: 110px;
+    height: 110px;
+  }
+
+  .brand-mark {
+    width: 46px;
+    height: 46px;
+  }
+
+  .brand-copy strong {
+    font-size: 0.96rem;
+  }
+
+  .brand-copy small {
+    display: block;
+    font-size: 0.54rem;
+    letter-spacing: 0.11em;
+  }
+
+  .desktop-nav {
+    display: inline-flex !important;
+    width: min(100%, 780px);
+    min-height: 66px;
+    padding: 6px 12px;
+  }
+
+  .desktop-nav::before {
+    left: 18px;
+    right: 18px;
+  }
+
+  .desktop-nav a {
+    min-width: 0;
+    gap: 5px;
+    padding: 9px 8px 10px;
+  }
+
+  .desktop-nav a + a::before {
+    top: 20%;
+    bottom: 20%;
+  }
+
+  .desktop-nav-icon {
+    min-height: 16px;
+  }
+
+  .desktop-nav a svg {
+    width: 15px;
+    height: 15px;
+  }
+
+  .desktop-nav-label {
+    font-size: 0.79rem;
+  }
+
+  .desktop-nav a.is-active::after {
+    top: -6px;
+    left: 14px;
+    right: 14px;
+  }
+
+  .header-controls {
+    gap: 8px;
+  }
+
+  .language-toggle {
+    padding: 4px;
+  }
+
+  .language-toggle button {
+    min-width: 40px;
+    min-height: 34px;
+    font-size: 0.72rem;
+  }
+}
+
+@media (max-width: 767px) {
+  .site-header {
+    width: min(100% - 18px, 720px);
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 12px;
+    padding: 10px 0;
+  }
+
+  .site-header::before {
+    width: min(100vw - 8px, 920px);
+    height: 128px;
+    top: -22px;
+    opacity: 0.72;
+  }
+
+  .site-header::after {
+    width: calc(100% - 52px);
+    top: 7px;
+  }
+
+  .brand {
+    min-width: 0;
+    max-width: none;
+    gap: 10px;
+    padding: 6px 0;
+  }
+
+  .brand::before {
+    left: -16px;
+    width: 96px;
+    height: 96px;
+  }
+
+  .brand-mark {
+    width: 42px;
+    height: 42px;
+    flex: 0 0 auto;
+  }
+
+  .brand-copy {
+    min-width: 0;
+  }
+
+  .brand-copy strong {
+    font-size: 0.96rem;
+  }
+
+  .brand-copy small {
+    font-size: 0.52rem;
+    letter-spacing: 0.1em;
+  }
+
+  .desktop-nav {
+    display: none !important;
+  }
+
+  .header-controls {
+    gap: 8px;
+    flex-shrink: 0;
+  }
+
+  .language-toggle {
+    padding: 4px;
+  }
+
+  .language-toggle button {
+    min-width: 38px;
+    min-height: 34px;
+    font-size: 0.72rem;
+  }
+
+  .mobile-nav-toggle,
+  .mobile-nav-panel,
+  .mobile-nav-backdrop {
+    display: flex;
+  }
+
+  .mobile-nav-panel {
+    display: block;
+  }
+}
+
+@media (max-width: 479px) {
+  .site-header {
+    width: min(100% - 12px, 720px);
+    gap: 8px;
+  }
+
+  .brand {
+    gap: 8px;
+  }
+
+  .brand-mark {
+    width: 38px;
+    height: 38px;
+  }
+
+  .brand-copy strong {
+    font-size: 0.9rem;
+  }
+
+  .brand-copy small {
+    font-size: 0.48rem;
+    letter-spacing: 0.08em;
+  }
+
+  .header-controls {
+    gap: 6px;
+  }
+
+  .language-toggle button {
+    min-width: 36px;
+    min-height: 32px;
+    font-size: 0.7rem;
+  }
+
+  .mobile-nav-toggle {
+    width: 42px;
+    height: 42px;
+    border-radius: 14px;
+  }
+
+  .mobile-nav-panel {
+    top: 78px;
+    width: min(100% - 16px, 420px);
+    max-height: calc(100vh - 92px);
+    padding: 10px;
+    border-radius: 20px;
+  }
+
+  .mobile-nav-panel a {
+    padding: 11px 12px;
+    gap: 10px;
+  }
+}
+
+/* =====================================================
+   HEADER MOBILE BRAND FINAL FIX
+   Fuerza visibilidad del texto del logo en mobile.
+===================================================== */
+
+@media (max-width: 767px) {
+  .brand,
+  .site-header .brand {
+    min-width: 0;
+    max-width: calc(100% - 112px);
+    flex: 1 1 auto;
+    overflow: visible;
+  }
+
+  .brand-copy,
+  .site-header .brand-copy,
+  .brand span:last-child {
+    display: flex !important;
+    min-width: 0;
+    max-width: 100%;
+    opacity: 1;
+    visibility: visible;
+    overflow: visible;
+  }
+
+  .brand-copy {
+    flex-direction: column;
+    gap: 3px;
+  }
+
+  .brand-copy strong {
+    display: block;
+    font-size: 0.92rem;
+    line-height: 1;
+    white-space: nowrap;
+  }
+
+  .brand-copy small {
+    display: block !important;
+    font-size: 0.46rem;
+    line-height: 1.1;
+    letter-spacing: 0.07em;
+    white-space: nowrap;
+  }
+
+  .header-controls {
+    flex: 0 0 auto;
+  }
+}
+
+@media (max-width: 479px) {
+  .brand,
+  .site-header .brand {
+    max-width: calc(100% - 98px);
+  }
+
+  .brand-copy strong {
+    font-size: 0.86rem;
+  }
+
+  .brand-copy small {
+    font-size: 0.42rem;
+    letter-spacing: 0.06em;
   }
 }

@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { motion, useMotionTemplate, useScroll, useSpring, useTransform } from 'framer-motion';
-import { ArrowRight, BarChart3, Bell, Blocks, BrainCircuit, Building2, CalendarDays, ChevronRight, Cloud, Code2, Cpu, Database, FileSearch, Folder, Globe, GitBranch, Layers3, LayoutDashboard, Lock, Mail, Map, Monitor, MonitorSmartphone, Puzzle, Rocket, Scale, ScanSearch, ServerCog, ShieldCheck, Sparkles, Star, Target, Truck, Wrench, Workflow, Zap, Box } from 'lucide-react';
+import { ArrowRight, BarChart3, Bell, Blocks, BrainCircuit, Building2, CalendarDays, ChevronRight, Cloud, Code2, Cpu, Database, FileSearch, Folder, Globe, GitBranch, Layers3, LayoutDashboard, Lock, Mail, Map, Monitor, MonitorSmartphone, Puzzle, Rocket, Scale, ScanSearch, ServerCog, ShieldCheck, Sparkles, Star, Target, Truck, Wrench, Workflow, Zap, Box, Menu, X } from 'lucide-react';
 import { siCloudflare, siDocker, siDuckdb, siFastapi, siFlask, siNodedotjs, siOllama, siOpencv, siPandas, siPlotly, siPostgresql, siPython, siRailway, siReact, siSqlite, siStreamlit, siVite, siXyflow } from 'simple-icons';
 import { copy } from './content/translations.js';
 import ordoLogo from './assets/ordo/logo.png';
@@ -331,6 +331,7 @@ function HeroSceneChart({ className, color = '#b06cff' }) {
 /* ── Header ── */
 function Header({ t, lang, setLang, onNavigate }) {
   const [scrolled, setScrolled] = useState(false);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const navTargets = t.nav.items.map((item) => item.href.split('#')[1]).filter(Boolean);
   const [activeSection, setActiveSection] = useState(() => window.location.hash?.slice(1) || navTargets[0] || 'home');
 
@@ -364,18 +365,94 @@ function Header({ t, lang, setLang, onNavigate }) {
     return () => observer.disconnect();
   }, [navTargets]);
 
+  useEffect(() => {
+    function handleResize() {
+      if (window.innerWidth >= 768) setMobileMenuOpen(false);
+    }
+
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
+  useEffect(() => {
+    function handleKeyDown(event) {
+      if (event.key === 'Escape') setMobileMenuOpen(false);
+    }
+
+    if (mobileMenuOpen) {
+      document.body.style.overflow = 'hidden';
+      window.addEventListener('keydown', handleKeyDown);
+    } else {
+      document.body.style.overflow = '';
+    }
+
+    return () => {
+      document.body.style.overflow = '';
+      window.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [mobileMenuOpen]);
+
   return (
-    <header className={`site-header ${scrolled ? 'is-scrolled' : ''}`}>
-      <SmartLink href="/" onNavigate={onNavigate} className="brand" aria-label="DuarLabs home">
-        <span className="brand-mark">
-          <img src={duarLabsMark} alt="" className="brand-mark-image" aria-hidden="true" />
-        </span>
-        <span className="brand-copy">
-          <strong>DuarLabs</strong>
-          <small>{lang === 'es' ? 'Inteligencia operativa' : 'Operational intelligence'}</small>
-        </span>
-      </SmartLink>
-      <nav className="desktop-nav" aria-label="Primary navigation">
+    <>
+      <header className={`site-header ${scrolled ? 'is-scrolled' : ''}`}>
+        <SmartLink href="/" onNavigate={onNavigate} className="brand" aria-label="DuarLabs home">
+          <span className="brand-mark">
+            <img src={duarLabsMark} alt="" className="brand-mark-image" aria-hidden="true" />
+          </span>
+          <span className="brand-copy">
+            <strong>DuarLabs</strong>
+            <small>{lang === 'es' ? 'Inteligencia operativa' : 'Operational intelligence'}</small>
+          </span>
+        </SmartLink>
+        <nav className="desktop-nav" aria-label="Primary navigation">
+          {t.nav.items.map((item) => {
+            const sectionId = item.href.split('#')[1];
+            const Icon = headerNavIcons[sectionId] || Sparkles;
+            const isActive = activeSection === sectionId;
+
+            return (
+              <a
+                key={item.label}
+                href={item.href}
+                className={isActive ? 'is-active' : ''}
+                aria-current={isActive ? 'page' : undefined}
+                onClick={() => setActiveSection(sectionId)}
+                title={item.meta}
+              >
+                <span className="desktop-nav-icon" aria-hidden="true">
+                  <Icon size={17} strokeWidth={1.75} />
+                </span>
+                <span className="desktop-nav-label">{item.label}</span>
+              </a>
+            );
+          })}
+        </nav>
+        <div className="header-controls">
+          <LanguageToggle lang={lang} setLang={setLang} />
+          <button
+            type="button"
+            className={`mobile-nav-toggle ${mobileMenuOpen ? 'is-open' : ''}`}
+            aria-label={mobileMenuOpen ? (lang === 'es' ? 'Cerrar menú' : 'Close menu') : (lang === 'es' ? 'Abrir menú' : 'Open menu')}
+            aria-expanded={mobileMenuOpen}
+            aria-controls="mobile-nav-panel"
+            onClick={() => setMobileMenuOpen((open) => !open)}
+          >
+            {mobileMenuOpen ? <X size={18} strokeWidth={2} /> : <Menu size={18} strokeWidth={2} />}
+          </button>
+        </div>
+      </header>
+
+      <div
+        className={`mobile-nav-backdrop ${mobileMenuOpen ? 'is-open' : ''}`}
+        onClick={() => setMobileMenuOpen(false)}
+        aria-hidden={!mobileMenuOpen}
+      />
+
+      <nav
+        id="mobile-nav-panel"
+        className={`mobile-nav-panel ${mobileMenuOpen ? 'is-open' : ''}`}
+        aria-label={lang === 'es' ? 'Navegación móvil' : 'Mobile navigation'}
+      >
         {t.nav.items.map((item) => {
           const sectionId = item.href.split('#')[1];
           const Icon = headerNavIcons[sectionId] || Sparkles;
@@ -387,19 +464,23 @@ function Header({ t, lang, setLang, onNavigate }) {
               href={item.href}
               className={isActive ? 'is-active' : ''}
               aria-current={isActive ? 'page' : undefined}
-              onClick={() => setActiveSection(sectionId)}
-              title={item.meta}
+              onClick={() => {
+                setActiveSection(sectionId);
+                setMobileMenuOpen(false);
+              }}
             >
-              <span className="desktop-nav-icon" aria-hidden="true">
+              <span className="mobile-nav-icon" aria-hidden="true">
                 <Icon size={17} strokeWidth={1.75} />
               </span>
-              <span className="desktop-nav-label">{item.label}</span>
+              <span className="mobile-nav-copy">
+                <strong>{item.label}</strong>
+                <small>{item.meta}</small>
+              </span>
             </a>
           );
         })}
       </nav>
-      <LanguageToggle lang={lang} setLang={setLang} />
-    </header>
+    </>
   );
 }
 
