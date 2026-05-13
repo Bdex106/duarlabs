@@ -1464,7 +1464,9 @@ function Footer({ t, lang, setLang, onNavigate }) {
     <footer className="site-footer">
       <div className="container footer-grid">
         <SmartLink href="/" onNavigate={onNavigate} className="brand">
-          <span className="brand-mark">D</span>
+          <span className="brand-mark">
+            <img src={duarLabsMark} alt="" className="brand-mark-image" aria-hidden="true" />
+          </span>
           <span>DuarLabs</span>
         </SmartLink>
         <p>{new Date().getFullYear()} DuarLabs. {t.footer.rights}</p>
