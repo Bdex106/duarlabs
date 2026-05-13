@@ -1,9 +1,10 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { motion, useMotionTemplate, useScroll, useSpring, useTransform } from 'framer-motion';
-import { ArrowRight, Blocks, BrainCircuit, Building2, CalendarDays, ChevronRight, Cloud, Code2, Cpu, Database, FileSearch, Globe, GitBranch, Layers3, LayoutDashboard, Lock, Map, MonitorSmartphone, Puzzle, Rocket, ScanSearch, ServerCog, ShieldCheck, Sparkles, Star, Truck, Wrench, Workflow, Zap } from 'lucide-react';
+import { ArrowRight, BarChart3, Bell, Blocks, BrainCircuit, Building2, CalendarDays, ChevronRight, Cloud, Code2, Cpu, Database, FileSearch, Globe, GitBranch, Layers3, LayoutDashboard, Lock, Map, Monitor, MonitorSmartphone, Puzzle, Rocket, ScanSearch, ServerCog, ShieldCheck, Sparkles, Star, Target, Truck, Wrench, Workflow, Zap, Box } from 'lucide-react';
 import { siCloudflare, siDocker, siDuckdb, siFastapi, siFlask, siNodedotjs, siOllama, siOpencv, siPandas, siPlotly, siPostgresql, siPython, siRailway, siReact, siSqlite, siStreamlit, siVite, siXyflow } from 'simple-icons';
 import { copy } from './content/translations.js';
 import ordoLogo from './assets/ordo/logo.png';
+import DuarLabsLogoReveal from './components/DuarLabsLogoReveal.jsx';
 
 const ordoDashboard = '/ordo-data/assets/dashboard-BhJb6xgr.png';
 const ordoNormalization = '/ordo-data/assets/normalizacion-CSn--oZg.png';
@@ -66,6 +67,31 @@ const projectCardVisuals = [
   { icon: Workflow, tone: 'blue' },
   { icon: GitBranch, tone: 'violet' },
 ];
+
+const presentationConceptVisuals = [
+  { icon: ScanSearch, tone: 'cyan' },
+  { icon: Blocks, tone: 'violet' },
+  { icon: BrainCircuit, tone: 'violet' },
+  { icon: Map, tone: 'gold' },
+];
+
+const presentationKeywordVisuals = [
+  { icon: Database, tone: 'cyan' },
+  { icon: Workflow, tone: 'cyan' },
+  { icon: GitBranch, tone: 'violet' },
+  { icon: Layers3, tone: 'violet' },
+  { icon: ScanSearch, tone: 'cyan' },
+  { icon: ArrowRight, tone: 'gold' },
+  { icon: Zap, tone: 'gold' },
+  { icon: Blocks, tone: 'violet' },
+];
+
+const presentationFlowVisuals = {
+  source: { topIcon: Database, metaIcon: Database, tone: 'cyan' },
+  process: { topIcon: BrainCircuit, metaIcon: Target, tone: 'pink' },
+  analysis: { topIcon: Box, metaIcon: BarChart3, tone: 'violet' },
+  reports: { topIcon: Monitor, metaIcon: Bell, tone: 'indigo' },
+};
 
 const technologyIconMap = {
   React: { type: 'simple', icon: siReact },
@@ -528,6 +554,17 @@ function HomePage({ t, lang, setLang, onNavigate }) {
     return () => window.removeEventListener('mousemove', handleMouseMove);
   }, []);
 
+  const presentationNodes = ['source', 'process', 'analysis', 'reports']
+    .map((key) => {
+      const node = t.presentation.boardNodes.find((item) => item.key === key);
+      const visual = presentationFlowVisuals[key];
+
+      if (!node || !visual) return null;
+
+      return { ...node, ...visual };
+    })
+    .filter(Boolean);
+
   return (
     <>
       <Header t={t} lang={lang} setLang={setLang} onNavigate={onNavigate} />
@@ -600,36 +637,37 @@ function HomePage({ t, lang, setLang, onNavigate }) {
               <HeroSceneChart className="arch-chart-violet" color="#a855f7" />
             </motion.div>
 
-            {/* Content */}
-            <motion.div 
-              className="hero-content"
-              style={{ opacity: heroContentOpacity, y: heroContentY }}
-            >
-              <p className="eyebrow">
-                {t.hero.eyebrow}
-              </p>
+        {/* Content */}
+        <motion.div 
+          className="hero-content"
+          style={{ opacity: heroContentOpacity, y: heroContentY }}
+        >
+          <p className="eyebrow">
+            {t.hero.eyebrow}
+          </p>
 
-              <h1 className="hero-brand-title">
-                {t.hero.title}
-              </h1>
+          {/* LOGO PRINCIPAL — EFECTO LÁSER / GLITCH DIGITAL */}
+          <DuarLabsLogoReveal text={t.hero.title} />
 
-              <p className="hero-slogan">
-                {t.hero.slogan}
-              </p>
+          <p className="hero-slogan">
+            {t.hero.slogan}
+          </p>
 
-              <p className="hero-body">
-                {t.hero.body}
-              </p>
-              <div className="hero-actions">
-                <a href="#projects" className="button button-primary">
-                  <span>{t.hero.primary}</span>
-                  <ArrowRight size={18} strokeWidth={1.8} />
-                </a>
-                <a href="#contact" className="button button-secondary">
-                  {t.hero.secondary}
-                </a>
-              </div>
-            </motion.div>
+          <p className="hero-body">
+            {t.hero.body}
+          </p>
+
+          <div className="hero-actions">
+            <a href="#projects" className="button button-primary">
+              <span>{t.hero.primary}</span>
+              <ArrowRight size={18} strokeWidth={1.8} />
+            </a>
+
+            <a href="#contact" className="button button-secondary">
+              {t.hero.secondary}
+            </a>
+          </div>
+        </motion.div>
           </div>
         </section>
 
@@ -694,66 +732,130 @@ function HomePage({ t, lang, setLang, onNavigate }) {
               direction="left"
             />
             <Reveal className="diagram-shell" direction="up">
-              <div className="diagram-panel">
-                <div className="polygon-flow polygon-flow-large" aria-hidden="true">
-                  <div className="flow-dots flow-dots-left">
-                    <span /><span /><span /><span /><span /><span />
-                  </div>
-                  <div className="flow-dots flow-dots-right">
-                    <span /><span /><span /><span /><span /><span /><span /><span /><span />
+              {/* Panel principal: flujo de decisión */}
+              <div className="reference-flow-panel">
+                <div className="reference-flow-stage" aria-hidden="true">
+                  <div className="reference-flow-dots reference-flow-dots-left">
+                    <span /><span /><span /><span /><span /><span /><span /><span />
                   </div>
 
-                  <svg className="diagram-links-svg" viewBox="0 0 980 500" preserveAspectRatio="none">
-                    <path className="diagram-connection" d="M214 294 C 248 258, 292 208, 350 166" />
-                    <path className="diagram-connection" d="M384 174 C 392 232, 408 286, 474 322" />
-                    <path className="diagram-connection" d="M548 322 C 592 286, 634 224, 694 168" />
-                    <path className="diagram-connection" d="M734 170 C 744 228, 766 282, 818 320" />
-                  </svg>
+                  <div className="reference-flow-dots reference-flow-dots-right">
+                    <span /><span /><span /><span /><span /><span /><span /><span />
+                  </div>
 
-                  {t.presentation.boardNodes.map((node) => (
-                    <div key={node.key} className={`diagram-node diagram-node-${node.key}`}>
-                      <div className="diagram-node-shape">
-                        <span>{node.label}</span>
+                  <div className="reference-flow-track" />
+
+                  {/* Flechas de unión */}
+                  <div className="reference-flow-connector reference-flow-connector-source"><span /></div>
+                  <div className="reference-flow-connector reference-flow-connector-process"><span /></div>
+                  <div className="reference-flow-connector reference-flow-connector-analysis"><span /></div>
+
+                  {/* Nodos principales */}
+                  {presentationNodes.map((node) => {
+                    const TopIcon = node.topIcon;
+                    const MetaIcon = node.metaIcon;
+
+                    return (
+                      <div
+                        key={node.key}
+                        className={`reference-flow-node reference-flow-node-${node.key} reference-flow-tone-${node.tone}`}
+                      >
+                        <div className="reference-flow-diamond">
+                          <div className="reference-flow-diamond-inner">
+                            <TopIcon className="reference-flow-icon" size={40} strokeWidth={1.9} />
+                            <strong>{node.label}</strong>
+                          </div>
+                        </div>
+
+                        <div className="reference-flow-meta">
+                          <span className="reference-flow-meta-line" />
+                          <div className="reference-flow-meta-orb">
+                            <MetaIcon size={24} strokeWidth={1.9} />
+                          </div>
+                          <div className="reference-flow-meta-copy">
+                            <strong>{node.caption}</strong>
+                            <small>{node.meta}</small>
+                          </div>
+                        </div>
                       </div>
-                      {node.caption ? <small>{node.caption}</small> : null}
-                    </div>
-                  ))}
-
-                  <div className="diagram-badge diagram-badge-a">{t.presentation.boardBadges[0].label}</div>
-                  <div className="diagram-badge diagram-badge-b">{t.presentation.boardBadges[1].label}</div>
+                    );
+                  })}
                 </div>
-
               </div>
             </Reveal>
 
             <div className="presentation-support-grid">
               <Reveal direction="left">
-                {/* Tarjeta de capacidad con color propio */}
-                <InteractiveCard className="presentation-panel presentation-panel-compact capability-card capability-card-blue">
-                  <div className="presentation-copy">
-                    <p className="eyebrow">{t.presentation.scriptLabel}</p>
-                    <div className="concept-list concept-list-compact">
-                      {t.presentation.concepts.map((concept, index) => (
-                        <div className="concept-item" key={concept.title}>
-                          <span>{String(index + 1).padStart(2, '0')}</span>
-                          <div>
+                {/* Panel izquierdo: enfoque de implementación */}
+                <InteractiveCard className="presentation-panel presentation-detail-card presentation-detail-card-left">
+                  <div className="presentation-panel-head">
+                    <div className="presentation-panel-icon presentation-panel-icon-cyan" aria-hidden="true">
+                      <ScanSearch size={23} strokeWidth={1.9} />
+                    </div>
+                    <div className="presentation-panel-titleblock">
+                      <p className="presentation-panel-label">{t.presentation.scriptLabel}</p>
+                      <span className="presentation-panel-line presentation-panel-line-cyan" aria-hidden="true" />
+                    </div>
+                  </div>
+
+                  <div className="presentation-concept-list">
+                    {t.presentation.concepts.map((concept, index) => {
+                      const visual = presentationConceptVisuals[index] || presentationConceptVisuals[0];
+                      const ConceptIcon = visual.icon;
+
+                      return (
+                        <article
+                          className={`presentation-concept-row presentation-concept-row-${visual.tone}`}
+                          key={concept.title}
+                        >
+                          <span className={`presentation-concept-index presentation-concept-index-${visual.tone}`}>
+                            {String(index + 1).padStart(2, '0')}
+                          </span>
+
+                          <div className={`presentation-concept-icon presentation-concept-icon-${visual.tone}`} aria-hidden="true">
+                            <ConceptIcon size={22} strokeWidth={1.9} />
+                          </div>
+
+                          <div className="presentation-concept-copy">
                             <h3>{concept.title}</h3>
                             <p>{concept.body}</p>
                           </div>
-                        </div>
-                      ))}
-                    </div>
+                        </article>
+                      );
+                    })}
                   </div>
                 </InteractiveCard>
               </Reveal>
+
               <Reveal direction="right">
-                <StaggerContainer className="keyword-grid keyword-grid-panel" direction="right">
-                  {t.presentation.keywords.map((keyword) => (
-                    <StaggerItem key={keyword}>
-                      <span className="keyword-chip">{keyword}</span>
-                    </StaggerItem>
-                  ))}
-                </StaggerContainer>
+                {/* Panel derecho: áreas de capacidad */}
+                <InteractiveCard className="presentation-panel presentation-detail-card presentation-detail-card-right">
+                  <div className="presentation-panel-head">
+                    <div className="presentation-panel-icon presentation-panel-icon-violet" aria-hidden="true">
+                      <BrainCircuit size={23} strokeWidth={1.9} />
+                    </div>
+                    <div className="presentation-panel-titleblock">
+                      <p className="presentation-panel-label">{t.presentation.keywordsLabel}</p>
+                      <span className="presentation-panel-line presentation-panel-line-violet" aria-hidden="true" />
+                    </div>
+                  </div>
+
+                  <div className="presentation-chip-grid">
+                    {t.presentation.keywords.map((keyword, index) => {
+                      const visual = presentationKeywordVisuals[index] || presentationKeywordVisuals[0];
+                      const KeywordIcon = visual.icon;
+
+                      return (
+                        <span key={keyword} className={`presentation-chip presentation-chip-${visual.tone}`}>
+                          <span className="presentation-chip-icon" aria-hidden="true">
+                            <KeywordIcon size={18} strokeWidth={1.9} />
+                          </span>
+                          <span>{keyword}</span>
+                        </span>
+                      );
+                    })}
+                  </div>
+                </InteractiveCard>
               </Reveal>
             </div>
           </div>
